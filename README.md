@@ -237,10 +237,10 @@ This helper mod only works with Loenn. I will only make it work with Loenn.
 	  to the top-left corner of the screen. This is just a byproduct of the 
 	  way parallax is implemented.
 	> Using values:
-	>```
+	```
     	X = 160 - (Texture width) * 0.5
     	Y = 90 - (Texture height) * 0.5
-	>```
+	```
 	> in their respective fields should 're-calibrate' the image.
 	  Doing this will give you a backdrop that takes up the whole screen,
 	  and will still render at full resolution when zoomed out.
