@@ -1,0 +1,14 @@
+mods.ExCameraDynamics.name=Extended Camera Dynamics
+
+# Camera Reference Frame
+entities.ExCameraDynamics/CameraReferenceFrame.placements.name.default=Camera Reference Frame
+entities.ExCameraDynamics/ReferenceFrameLookout.placements.name.default=Watchtower (Reference Frame)
+
+# Camera Zoom Trigger
+triggers.ExCameraDynamics/CameraZoomTrigger.placements.name.default=Camera Zoom Trigger
+
+# Backdrops
+style.effects.ExCameraDynamics/ZoomParallax.name=Zoom Parallax [Extended Camera Dynamics]
+style.effects.ExCameraDynamics/ZoomParallaxDepth.name=Zoom Parallax (Depth-Based) [Extended Camera Dynamics]
+style.effects.ExCameraDynamics/ZoomParticleParallax.name=Zoom Particle Parallax [Extended Camera Dynamics]
+style.effects.ExCameraDynamics/ZoomParticleDepth.name=Zoom Particle (Depth-Based) [Extended Camera Dynamics]
