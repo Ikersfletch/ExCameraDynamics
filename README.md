@@ -45,7 +45,7 @@ ExCameraMetaData:
 
 >Make sure there's no extra indentation.
 The final file might look something like this:
->```.yaml
+```
 ArcherMetaData:
     ArcherSkin: 0
     CrawlMovement: true
@@ -75,7 +75,7 @@ Mountain:
     StarFogColor: D3F6FF
 ExCameraMetaData:
     EnableExtendedCamera: true
->```
+```
 
 With that, you should be done!
 
