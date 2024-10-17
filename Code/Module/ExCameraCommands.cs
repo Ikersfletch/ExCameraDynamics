@@ -23,7 +23,7 @@ namespace ExtendedCameraDynamics.Code.Module
             CameraZoomHooks.ResizeVanillaBuffers((Engine.Scene as Level)?.Zoom ?? 1f);
         }
 
-        [Command("excam_force_zoom", "forcibly sets the zoom to the specified factor. negative values reset to normal behavior. force_zoom <factor>")]
+        [Command("excam_force_zoom", "Forces the zoom factor to the specified value. Negative values undo its effect.")]
         public static void UnsafeSetZoom(float factor)
         {
             CameraZoomHooks.TriggerZoomOverride = factor;

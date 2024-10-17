@@ -289,13 +289,19 @@ This helper mod only works with Loenn. I will only make it work with Loenn.
 	
 	Takes Duration seconds to reach the frame.
 
+	You can also use:
+
+	`{ reset_camera }`
+
+	To let the camera revert itself automatically.
+
 - ### Console Commands: 
 	- `excam_is_active`
 	   > Tells you if the camera hooks are currently active.
 	- `excam_enable_hooks`
 	   > Forcefully enables camera hooks for levels without the metadata.
 	- `excam_force_zoom <factor:float>`
-	   > Forces the zoom factor to the specified value.
+	   > Forces the zoom factor to the specified value. Negative values negate its effect.
 	- `excam_zoom_to_reference_frame <EasyKey:string> <Duration:float>`
 	   > Zoom & pan over to the CameraReferenceFrame with matching Easykey over 
         Duration seconds. The camera will be stuck afterwards. Call 
@@ -306,6 +312,8 @@ This helper mod only works with Loenn. I will only make it work with Loenn.
              offset & funky after some cutscenes if the cutscene doesn't reset
              the zoom. Use this to re-enable the automatic zooming and return to 
              regular behavior.
+	- `excam_set_resting_zoom`
+	   > Sets the default zoom to the specified factor. Negative values reset to the value specified in the Chapter's metadata.
 
 ## Oh! also!!
 
