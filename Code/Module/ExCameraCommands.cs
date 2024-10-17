@@ -1,6 +1,6 @@
 ﻿using Celeste;
+using Celeste.Mod.ExCameraDynamics.Code.Entities;
 using Celeste.Mod.ExCameraDynamics.Code.Hooks;
-using ExtendedCameraDynamics.Code.Entities;
 using Monocle;
 using System;
 using System.Collections;
@@ -27,6 +27,12 @@ namespace ExtendedCameraDynamics.Code.Module
         public static void UnsafeSetZoom(float factor)
         {
             CameraZoomHooks.TriggerZoomOverride = factor;
+        }
+
+        [Command("excam_set_resting_zoom", "sets the default zoom to the specified factor. negative values reset to normal behavior.")]
+        public static void SetRestingZoomFactor(float factor)
+        {
+            CameraZoomHooks.RestingZoomFactorOverride = factor;
         }
 
         [Command("excam_unstick_zoom", "forces automatic zooming if camera hooks are enabled.")]

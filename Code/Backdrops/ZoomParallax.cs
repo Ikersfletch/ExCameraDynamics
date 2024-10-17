@@ -8,7 +8,6 @@ using Monocle;
 using System;
 using System.Globalization;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace ExtendedCameraDynamics.Code.Backdrops
 {
@@ -209,7 +208,6 @@ namespace ExtendedCameraDynamics.Code.Backdrops
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public void RenderByRepetition(Scene scene)
         {
             Level level = scene as Level;

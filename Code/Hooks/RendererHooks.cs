@@ -5,7 +5,6 @@ using Monocle;
 using MonoMod.Cil;
 using System;
 using System.Linq;
-using static Celeste.Mod.ExCameraDynamics.ExCameraModule;
 namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 {
     public static partial class CameraZoomHooks
@@ -17,7 +16,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             orig();
 
             // I could overwrite this method, or I could do this and recreate the buffers twice like a boss >:)
-            //ResizeVanillaBuffers(ZoomTarget);
+            ResizeVanillaBuffers(ZoomTarget);
 
             // Invoke the event
             OnBufferCreation?.Invoke(BufferWidthOverride, BufferHeightOverride);

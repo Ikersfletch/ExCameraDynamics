@@ -145,7 +145,7 @@ namespace Celeste.Mod.ExCameraDynamics
         /// <returns>value.X => minimum zoom factor<br></br>value.Y => maximum zoom factor</returns>
         public static ZoomBounds GetCameraZoomBounds(this Player player, Level level)
         {
-            if (!player.InControl || (level?.InCutscene ?? true)) return new ZoomBounds(level?.Zoom ?? 1f);
+            if (!player.InControl || (level?.InCutscene ?? true)) return new ZoomBounds(level?.Zoom ?? CameraZoomHooks.RestingZoomFactor);
 
             return GetCameraZoomUnsafe(player, level);
         }
@@ -186,7 +186,7 @@ namespace Celeste.Mod.ExCameraDynamics
                 return CameraZoomHooks.TriggerZoomOverride;
             }
 
-            float nearest_so_far = 1.0f;
+            float nearest_so_far = CameraZoomHooks.RestingZoomFactor;
             foreach (CameraZoomTrigger trigger in level.Tracker.Entities[typeof(CameraZoomTrigger)])
             {
                 if (!trigger.Active || !trigger.CollideCheck<Player>()) continue;
@@ -207,7 +207,7 @@ namespace Celeste.Mod.ExCameraDynamics
                 return CameraZoomHooks.TriggerZoomOverride;
             }
 
-            float nearest_so_far = 1.0f;
+            float nearest_so_far = CameraZoomHooks.RestingZoomFactor;
             foreach (CameraZoomTrigger trigger in level.Tracker.Entities[typeof(CameraZoomTrigger)])
             {
                 if (!trigger.Active || !trigger.CollidePoint(position)) continue;

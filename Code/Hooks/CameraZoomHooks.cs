@@ -1,5 +1,4 @@
 ﻿using Celeste.Mod.ExCameraDynamics.Code.Entities;
-using ExtendedCameraDynamics.Code.Entities;
 using ExtendedCameraDynamics.Code.Module;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
@@ -23,12 +22,12 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             {
                 if (furthest < 0)
                 {
-                    this.Nearest = 1f;
-                    this.Furthest = 1f;
+                    this.Nearest = CameraZoomHooks.RestingZoomFactor;
+                    this.Furthest = CameraZoomHooks.RestingZoomFactor;
                     return;
                 }
-                this.Nearest = 1f;
-                this.Furthest = Math.Min(furthest, 1f);
+                this.Nearest = CameraZoomHooks.RestingZoomFactor;
+                this.Furthest = Math.Min(furthest, CameraZoomHooks.RestingZoomFactor);
                 return;
             }
             this.Nearest = nearest;
@@ -38,6 +37,15 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
     }
     public static partial class CameraZoomHooks
     {
+        private static float _resting_zoom_factor = 1f;
+        public static float RestingZoomFactor => RestingZoomFactorOverride > 0f ? RestingZoomFactorOverride : _resting_zoom_factor;
+        public static float RestingZoomFactorOverride { get; set; } = -1f;
+
+        public static void SetRestingZoomFactor(float factor)
+        {
+            _resting_zoom_factor = factor;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool MatchesSequence(Instruction start, params Predicate<Instruction>[] sequence)
         {
@@ -421,10 +429,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             ReplaceNextFloat(cursor, 320f, GetBufferWidth);
 
             ReplaceNextFloat(cursor, 6f, 
-                () => 6f * ((Engine.Scene as Level)?.Zoom ?? 1f) 
+                () => 6f * ((Engine.Scene as Level)?.Zoom ?? RestingZoomFactor) 
             );
             ReplaceNextFloat(cursor, 6f,
-                () => 6f * ((Engine.Scene as Level)?.Zoom ?? 1f)
+                () => 6f * ((Engine.Scene as Level)?.Zoom ?? RestingZoomFactor)
             );
         }
 

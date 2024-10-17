@@ -1,18 +1,11 @@
-﻿using Celeste;
-using Celeste.Mod.Entities;
-using Celeste.Mod.ExCameraDynamics;
+﻿using Celeste.Mod.Entities;
 using Celeste.Mod.ExCameraDynamics.Code.Components;
-using Celeste.Mod.ExCameraDynamics.Code.Hooks;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ExtendedCameraDynamics.Code.Entities
+namespace Celeste.Mod.ExCameraDynamics.Code.Entities
 {
     public struct CameraFocus
     {
@@ -25,8 +18,8 @@ namespace ExtendedCameraDynamics.Code.Entities
         public float Zoom;
         public CameraFocus(Vector2 top_left, float zoom)
         {
-            this.Position = top_left;
-            this.Zoom = zoom;
+            Position = top_left;
+            Zoom = zoom;
         }
         public CameraFocus(Level level) : this(level.Camera.Position, level.Zoom) { }
 
@@ -87,10 +80,10 @@ namespace ExtendedCameraDynamics.Code.Entities
         public CameraFocus Lerp(CameraFocus other, float t) => new CameraFocus(
             Vector2.Lerp(Position, other.Position, t),
             LerpZoom(Zoom, other.Zoom, t)
-            //(Zoom * other.Zoom) / (other.Zoom + t * (Zoom - other.Zoom))
+        //(Zoom * other.Zoom) / (other.Zoom + t * (Zoom - other.Zoom))
         );
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float LerpZoom(float start, float end, float t) => (start * end) / (end + t * (start - end));
+        public static float LerpZoom(float start, float end, float t) => start * end / (end + t * (start - end));
 
         public static implicit operator CameraFocusWrapper(CameraFocus self) => new CameraFocusWrapper(self);
     }
@@ -106,7 +99,7 @@ namespace ExtendedCameraDynamics.Code.Entities
     }
     public interface ICameraFocusSource
     {
-        public CameraFocus CameraFocus { get;}
+        public CameraFocus CameraFocus { get; }
     }
 
 
@@ -120,10 +113,12 @@ namespace ExtendedCameraDynamics.Code.Entities
         public float Zoom = 1.0f;
         public Vector2 AbsoluteCameraPosition
         {
-            get { 
+            get
+            {
                 return Position - new Vector2(160f, 90f) / Zoom;
             }
-            set {
+            set
+            {
                 Position = value + new Vector2(160f, 90f) / Zoom;
             }
         }

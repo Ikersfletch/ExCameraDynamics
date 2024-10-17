@@ -1,5 +1,5 @@
 ﻿using Celeste.Mod.ExCameraDynamics.Code.Components;
-using ExtendedCameraDynamics.Code.Entities;
+using Celeste.Mod.ExCameraDynamics.Code.Entities;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using Monocle;
@@ -267,7 +267,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             self.ForceCameraTo(CameraFocus.FullZoomEvalLoading(player, self));
             AutomaticZooming = true;
-            ResizeVanillaBuffers(self.Zoom);
+            //ResizeVanillaBuffers(self.Zoom);
         }
         public static void Level_LoadLevel_orig(ILContext il)
         {

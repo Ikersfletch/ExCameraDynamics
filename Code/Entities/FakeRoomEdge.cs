@@ -1,7 +1,5 @@
-﻿using Celeste;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Monocle;
-using System.Runtime.CompilerServices;
 
 namespace Celeste.Mod.ExCameraDynamics.Code.Entities
 {

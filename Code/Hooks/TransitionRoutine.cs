@@ -21,7 +21,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             // the current zoom to start transitioning from
             _mid_transition_starting_zoom = level.Zoom;
             // the zoom to eventually transition to
-            _mid_transition_target_zoom = 1f;
+            _mid_transition_target_zoom = RestingZoomFactor;
             // trigger zoom override is the value of `force_zoom` command
             if (TriggerZoomOverride > 0f)
             {
@@ -29,6 +29,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             }
             else
             {
+                Vector2 playerPos = player.Position;
+                player.Position = playerTo;
                 // find the target zoom for the end of the transition
                 foreach (CameraZoomTrigger item in player.CollideAll<CameraZoomTrigger>())
                 {
@@ -38,6 +40,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
                         break;
                     }
                 }
+                player.Position = playerPos;
                 trigger_zoom_target = _mid_transition_target_zoom;
             }
             level.Zoom = _mid_transition_target_zoom;

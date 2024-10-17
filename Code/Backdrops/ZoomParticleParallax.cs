@@ -7,9 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Monocle;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExtendedCameraDynamics.Code.Backdrops
 {
@@ -89,7 +86,7 @@ namespace ExtendedCameraDynamics.Code.Backdrops
                 Tint = Calc.Random.Next(data.TintCount),
                 Position = new Vector2(Calc.Random.Next(data.Bounds.Width), Calc.Random.Next(data.Bounds.Height)),
                 Velocity = new Vector2(Calc.Random.Range(data.MinSpeedX, data.MaxSpeedX), Calc.Random.Range(data.MinSpeedY, data.MaxSpeedY)),
-                Scroll = Calc.Random.Range(data.MinScrollX, data.MaxScrollX) * new Vector2(1.0f, data.MaxScrollY),
+                Scroll = new Vector2(Calc.Random.Range(data.MinScrollX, data.MaxScrollX), Calc.Random.Range(data.MinScrollY, data.MaxScrollY)),
                 Angle = data.BaseAngle - data.AngleSpread * 0.5f + Calc.Random.NextFloat() * data.AngleSpread,
                 AngularVelocity = Calc.Random.Range(data.MinAngleSpeed, data.MaxAngleSpeed),
                 WindAffect = Calc.Random.Range(data.MinWindAffect, data.MaxWindAffect)

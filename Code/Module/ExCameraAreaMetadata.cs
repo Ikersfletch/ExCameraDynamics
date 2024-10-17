@@ -19,16 +19,20 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
             return meta.ExCameraMetaData;
         }
         public bool EnableExtendedCamera { get; set; } = false;
+        public float RestingZoomFactor { get; set; } = 1f;
         public void FillInSession()
         { 
             if (EnableExtendedCamera)
             {
                 CameraZoomHooks.Hook();
+                CameraZoomHooks.SetRestingZoomFactor(RestingZoomFactor);
             }
             else
             {
                 CameraZoomHooks.Unhook();
+                CameraZoomHooks.SetRestingZoomFactor(1f);
             }
+
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using Celeste.Mod.ExCameraDynamics.Code.Hooks;
-using ExtendedCameraDynamics.Code.Entities;
+﻿using Celeste.Mod.ExCameraDynamics.Code.Entities;
+using Celeste.Mod.ExCameraDynamics.Code.Hooks;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -63,14 +63,6 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Components
         /// <param name="minZoomInFactor"></param>
         public static CameraFocus GetFocusTarget(Level level, Vector2 playerPosition, Vector2 weightedAverage, ZoomBounds bounds)
         {
-            /*
-            if (bounds.Furthest >= 1f)
-            {
-                Vector2 maxStrayDist = new Vector2(140f, 70f);
-                return new CameraFocus(Vector2.Clamp(weightedAverage, playerPosition - maxStrayDist, playerPosition + maxStrayDist), 1f);
-            }
-            */
-
             {
                 Vector2 difference = weightedAverage - playerPosition;
 

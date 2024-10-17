@@ -5,7 +5,6 @@
     <Title>Extended Camera Dynamics</Title>
     <Authors>Isla Fletcher</Authors>
     <AssemblyName>ExCameraDynamics</AssemblyName>
-	<CelestePrefix Condition="'$(CelestePrefix)' == '' And Exists('..\..\..\Celeste.dll')">..\..\..</CelestePrefix>
 	<CelestePrefix Condition="'$(CelestePrefix)' == ''">lib-stripped</CelestePrefix>
   </PropertyGroup>
 
@@ -45,6 +44,18 @@
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.07.31.01" PrivateAssets="all" ExcludeAssets="runtime" />
         <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
 
+		<!-- 
+		<Reference Include="../../Celeste.dll" Publicize="true">
+			<Private>false</Private>
+        </Reference>
+        <Reference Include="../../MMHOOK_Celeste.dll" Publicize="true">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="../../FNA.dll" Publicize="true">
+            <Private>false</Private>
+        </Reference> 
+		-->
+		
         <Reference Include="lib-stripped/Celeste.dll" Publicize="true">
             <Private>false</Private>
         </Reference>

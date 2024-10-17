@@ -1,14 +1,13 @@
 ﻿using Celeste.Mod.ExCameraDynamics.Code.Components;
+using Celeste.Mod.ExCameraDynamics.Code.Entities;
 using Celeste.Mod.ExCameraDynamics.Code.Hooks;
 using Celeste.Mod.ExCameraDynamics.Code.Triggers;
-using ExtendedCameraDynamics.Code.Entities;
 using Microsoft.Xna.Framework;
 using Monocle;
 using MonoMod.ModInterop;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using static Celeste.MoonGlitchBackgroundTrigger;
 namespace Celeste.Mod.ExCameraDynamics.Code.Module
 {
     [ModExportName("ExtendedCameraDynamics")]

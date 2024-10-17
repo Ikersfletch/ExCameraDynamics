@@ -1,21 +1,13 @@
-﻿using Celeste;
-using Celeste.Mod.Entities;
-using Celeste.Mod.ExCameraDynamics;
+﻿using Celeste.Mod.Entities;
 using Celeste.Mod.ExCameraDynamics.Code.Hooks;
-using Celeste.Mod.ExCameraDynamics.Code.Module;
 using Microsoft.Xna.Framework;
 using Monocle;
-using MonoMod;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace ExtendedCameraDynamics.Code.Entities
+namespace Celeste.Mod.ExCameraDynamics.Code.Entities
 {
     [CustomEntity("ExCameraDynamics/ReferenceFrameLookout")]
     public class ReferenceFrameLookout : Entity
@@ -46,17 +38,17 @@ namespace ExtendedCameraDynamics.Code.Entities
         public ReferenceFrameLookout(EntityData data, Vector2 offset)
             : base(data.Position + offset)
         {
-            base.Depth = -8500;
+            Depth = -8500;
             Add(talk = new TalkComponent(new Rectangle(-24, -8, 48, 8), new Vector2(-0.5f, -20f), Interact));
             talk.PlayerMustBeFacing = false;
             onlyY = data.Bool("onlyY");
-            base.Collider = new Hitbox(4f, 4f, -2f, -4f);
+            Collider = new Hitbox(4f, 4f, -2f, -4f);
             VertexLight vertexLight = new VertexLight(new Vector2(-1f, -11f), Color.White, 0.8f, 16, 24);
             Add(vertexLight);
             lightTween = vertexLight.CreatePulseTween();
             Add(lightTween);
             Add(sprite = GFX.SpriteBank.Create("lookout"));
-            sprite.OnFrameChange = [MethodImpl(MethodImplOptions.NoInlining)] (string s) =>
+            sprite.OnFrameChange = [MethodImpl(MethodImplOptions.NoInlining)] (s) =>
             {
                 switch (s)
                 {
@@ -87,12 +79,13 @@ namespace ExtendedCameraDynamics.Code.Entities
             if (nodes == null)
             {
                 nodes = new List<CameraReferenceFrame>(referenceFrameEasyKeys.Length);
-            } else
+            }
+            else
             {
                 nodes.Clear();
             }
 
-            for (int i = 0; i < referenceFrameEasyKeys.Length; i ++)
+            for (int i = 0; i < referenceFrameEasyKeys.Length; i++)
             {
                 CameraReferenceFrame frame = CameraReferenceFrame.GetFromEasyKey(level, referenceFrameEasyKeys[i]);
                 nodes.Add(frame);
@@ -147,7 +140,7 @@ namespace ExtendedCameraDynamics.Code.Entities
             }
 
             base.Update();
-            Player entity = base.Scene.Tracker.GetEntity<Player>();
+            Player entity = Scene.Tracker.GetEntity<Player>();
             if (entity != null)
             {
                 sprite.Active = interacting || entity.StateMachine.State != 11;
@@ -275,20 +268,20 @@ namespace ExtendedCameraDynamics.Code.Entities
 
 
                 {
-                    CameraFocus previousFrame = ((node <= 0) ? camStartFocus : nodes[node - 1].CameraFocus);
+                    CameraFocus previousFrame = node <= 0 ? camStartFocus : nodes[node - 1].CameraFocus;
                     CameraFocus nodeFrame = nodes[node].CameraFocus;
                     float distance = (previousFrame.Center - nodeFrame.Center).Length();
                     if (nodePercent < 0.25f && node > 0)
                     {
                         //Lookout
-                        CameraFocus begin = ((node <= 1) ? camStartFocus : nodes[node - 2].CameraFocus).Lerp(previousFrame, 0.75f);
+                        CameraFocus begin = (node <= 1 ? camStartFocus : nodes[node - 2].CameraFocus).Lerp(previousFrame, 0.75f);
                         CameraFocus end = previousFrame.Lerp(nodeFrame, 0.25f);
                         SimpleCurve simpleCurve = new SimpleCurve(begin.Center, end.Center, previousFrame.Center);
                         float percent = 0.5f + nodePercent / 0.25f * 0.5f;
                         Vector2 center = simpleCurve.GetPoint(percent);
                         level.ForceCameraTo(
                             CameraFocus.FromCenter(
-                                center, 
+                                center,
                                 CameraFocus.LerpZoom(begin.Zoom, end.Zoom, percent)
                             )
                         );
@@ -342,7 +335,7 @@ namespace ExtendedCameraDynamics.Code.Entities
                     float totalDistance = 0f;
                     for (int i = 0; i < nodes.Count; i++)
                     {
-                        float interNodeDistance = (((i == 0) ? camStartFocus.Center : nodes[i - 1].CameraFocus.Center) - nodes[i].CameraFocus.Center).Length();
+                        float interNodeDistance = ((i == 0 ? camStartFocus.Center : nodes[i - 1].CameraFocus.Center) - nodes[i].CameraFocus.Center).Length();
                         totalDistance += interNodeDistance;
                         if (i < node)
                         {
