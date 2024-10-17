@@ -1,12 +1,22 @@
-EX_CAMERA_DYNAMICSTEST_FOCUS=
+LilacIsle_EX_CAMERA_DYNAMICS_TEST_FOCUS=
 	{focus_camera 0 1.0}
 	{1.0}
 
-	{MADELINE left upset}
+	[MADELINE left upset]
 	yeah. This is a thing.
 	
+	
 
-	{MADELINE right normal}
-	but watch, it gets better~
+	{focus_camera 1 5.0}
+	[MADELINE left upset]
+	{>> 0.1} SLOOOOOOW. {>> 1.0}
+
+	[MADELINE left upset]
+	{focus_camera 2 0.5}
+	We all wanted to see that particular part of the room, I'm sure.
+	
+
+	[MADELINE right normal]
+	Don't worry! It gets better, though.
 
 	{reset_camera}

@@ -29,7 +29,7 @@ namespace ExtendedCameraDynamics.Code.Module
             CameraZoomHooks.TriggerZoomOverride = factor;
         }
 
-        [Command("excam_set_resting_zoom", "sets the default zoom to the specified factor. negative values reset to normal behavior.")]
+        [Command("excam_set_resting_zoom", "Sets the default zoom to the specified factor. Negative values reset to the value specified in the Chapter's metadata.")]
         public static void SetRestingZoomFactor(float factor)
         {
             CameraZoomHooks.RestingZoomFactorOverride = factor;
@@ -63,6 +63,8 @@ namespace ExtendedCameraDynamics.Code.Module
             {
                 public Dummy(Level level, CameraReferenceFrame frame, float duration)
                 {
+                    level?.Entities?.FindFirst<Dummy>()?.RemoveSelf();
+                    
                     Add(new Coroutine(Do(new Coroutine(level.ZoomToFocus(frame, duration)) { RemoveOnComplete = true })));
                 }
                 public IEnumerator Do(Coroutine doMe)
