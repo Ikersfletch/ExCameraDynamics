@@ -41,6 +41,7 @@ __Then, within that *.meta.yaml file, copy and paste the following into it:__
 ```
 ExCameraMetaData:
     EnableExtendedCamera: true
+    RestingZoomFactor: 1.0
 ```
 
 >Make sure there's no extra indentation.
@@ -75,6 +76,7 @@ Mountain:
     StarFogColor: D3F6FF
 ExCameraMetaData:
     EnableExtendedCamera: true
+    RestingZoomFactor: 1.0
 ```
 
 With that, you should be done!
