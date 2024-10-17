@@ -1,14 +1,11 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
+using Monocle;
 using MonoMod.Cil;
 using System;
-using Microsoft.Xna.Framework;
-using System.Reflection;
-using Monocle;
-using YamlDotNet.Core;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics.PackedVector;
-using System.Collections;
+using System.Reflection;
 
 namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 {
@@ -722,10 +719,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             ILCursor cursor = new ILCursor(il);
 
-            ReplaceNextFloat(cursor, 340f,
+            cursor.ReplaceNextFloat( 340f,
                 () => VisibleWidth() + 20
             );
-            ReplaceNextFloat(cursor, 200f,
+            cursor.ReplaceNextFloat( 200f,
                 () => VisibleHeight() + 20
             );
         }
@@ -733,11 +730,11 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         private static void AscendManager_Routine(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
-            ReplaceNextFloat(cursor, -160f,
+            cursor.ReplaceNextFloat( -160f,
                 () => -VisibleWidth() * 0.5f);
-            ReplaceNextFloat(cursor, -90f,
+            cursor.ReplaceNextFloat( -90f,
                 () => -VisibleHeight() * 0.5f);
-            ReplaceNextFloat(cursor, -160f,
+            cursor.ReplaceNextFloat( -160f,
                 () => -VisibleHeight());
         }
         private static void _ascend_manager_streaks_repeat_render(MTexture texture, Vector2 position, Color color, Vector2 scale)
@@ -755,13 +752,13 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             cursor.GotoNext(next => next.MatchCallvirt<MTexture>("DrawCentered"));
             cursor.Remove();
             cursor.EmitDelegate<Action<MTexture, Vector2, Color, Vector2>>(_ascend_manager_streaks_repeat_render);
-            ReplaceNextFloat(cursor, 26f, () => 26f + VisibleWidth() * 0.5f - 160f);//16 / CurrentLevelZoom());
-            ReplaceNextFloat(cursor, 200f, () => 20 + VisibleHeight());
+            cursor.ReplaceNextFloat( 26f, () => 26f + VisibleWidth() * 0.5f - 160f);//16 / CurrentLevelZoom());
+            cursor.ReplaceNextFloat( 200f, () => 20 + VisibleHeight());
 
-            ReplaceNextFloat(cursor, 320f, () => VisibleWidth() * 0.5f + 160f);
-            //ReplaceNextFloat(cursor, 16f, () => 16 / CurrentLevelZoom());
-            ReplaceNextFloat(cursor, 26f, () => 26f + VisibleWidth() * 0.5f - 160f);
-            ReplaceNextFloat(cursor, 200f, () => 20 + VisibleHeight());
+            cursor.ReplaceNextFloat( 320f, () => VisibleWidth() * 0.5f + 160f);
+            //cursor.ReplaceNextFloat( 16f, () => 16 / CurrentLevelZoom());
+            cursor.ReplaceNextFloat( 26f, () => 26f + VisibleWidth() * 0.5f - 160f);
+            cursor.ReplaceNextFloat( 200f, () => 20 + VisibleHeight());
         }
         private static void _ascend_manager_clouds_shift_to_center(MTexture texture, Vector2 position, Color color)
         {
@@ -777,8 +774,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         private static void AscendManager_Fader_Render(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
-            ReplaceNextFloat(cursor, 340f, () => VisibleWidth() + 20f);
-            ReplaceNextFloat(cursor, 200f, () => VisibleHeight() + 20f);
+            cursor.ReplaceNextFloat( 340f, () => VisibleWidth() + 20f);
+            cursor.ReplaceNextFloat( 200f, () => VisibleHeight() + 20f);
         }
         // This would be an IL hook, but there are a few reasons why it's not.
         // 1) it uses explicit vertex-based rendering

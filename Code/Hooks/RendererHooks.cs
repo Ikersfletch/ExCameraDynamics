@@ -16,7 +16,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             orig();
 
             // I could overwrite this method, or I could do this and recreate the buffers twice like a boss >:)
-            ResizeVanillaBuffers(ZoomTarget);
+            //ResizeVanillaBuffers(ZoomTarget);
 
             // Invoke the event
             OnBufferCreation?.Invoke(BufferWidthOverride, BufferHeightOverride);
@@ -69,7 +69,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         public static void DustEdges_BeforeRender(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
-            cursor.GotoNext(start => MatchesSequence(
+            cursor.GotoNext(start => CalcPlus.MatchesSequence(
                 start,
                 next => next.OpCode == OpCodes.Ldsfld,
                 next => next.OpCode == OpCodes.Callvirt,
@@ -82,16 +82,16 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
                 next => next.MatchLdcR4(320)
             )); // I love excessive IL matching protocols. It's great.
 
-            ReplaceNextFloat(cursor, 320f, GetBufferWidth);
-            ReplaceNextFloat(cursor, 180f, GetBufferHeight);
-            ReplaceNextFloat(cursor, 320f, GetBufferWidth);
-            ReplaceNextFloat(cursor, 180f, GetBufferHeight);
+            cursor.ReplaceNextFloat( 320f, GetBufferWidth);
+            cursor.ReplaceNextFloat( 180f, GetBufferHeight);
+            cursor.ReplaceNextFloat( 320f, GetBufferWidth);
+            cursor.ReplaceNextFloat( 180f, GetBufferHeight);
 
             // I love how this is just a constant in the IL code- It's almost certainly (1f / GameWidth) in the source and then evaluated at compile-time,
             // but the random 0.090035209423427394206463405t863408 is just
             // it's great
-            ReplaceNextFloat(cursor, 0.003125f, GetPixelU);
-            ReplaceNextFloat(cursor, 0.0055555557f, GetPixelV);
+            cursor.ReplaceNextFloat( 0.003125f, GetPixelU);
+            cursor.ReplaceNextFloat( 0.0055555557f, GetPixelV);
         }
 
         public static float GetPixelU()
@@ -108,16 +108,16 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             ILCursor cursor = new ILCursor(il);
 
-            ReplaceNextFloat(cursor, 320f, GetBufferWidth);
-            ReplaceNextFloat(cursor, 180f, GetBufferHeight);
+            cursor.ReplaceNextFloat( 320f, GetBufferWidth);
+            cursor.ReplaceNextFloat( 180f, GetBufferHeight);
         }
 
         // Lightning Bloom needs to be adjusted for the entire screen
         private static void LightningRenderer_RenderBloom(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
-            ReplaceNextFloat(cursor, 320f, GetBufferWidth);
-            ReplaceNextFloat(cursor, 180f, GetBufferHeight);
+            cursor.ReplaceNextFloat( 320f, GetBufferWidth);
+            cursor.ReplaceNextFloat( 180f, GetBufferHeight);
         }
 
 

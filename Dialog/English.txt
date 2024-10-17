@@ -1,0 +1,12 @@
+EX_CAMERA_DYNAMICSTEST_FOCUS=
+	{focus_camera 0 1.0}
+	{1.0}
+
+	{MADELINE left upset}
+	yeah. This is a thing.
+	
+
+	{MADELINE right normal}
+	but watch, it gets better~
+
+	{reset_camera}

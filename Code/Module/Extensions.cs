@@ -1,10 +1,12 @@
 ﻿using Celeste.Mod.ExCameraDynamics.Code.Hooks;
 using Celeste.Mod.ExCameraDynamics.Code.Triggers;
 using Microsoft.Xna.Framework;
+using Mono.Cecil.Cil;
 using Monocle;
 using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Celeste.Mod.ExCameraDynamics
 {
@@ -230,6 +232,36 @@ namespace Celeste.Mod.ExCameraDynamics
         {
             cursor.Index++;
             cursor.Emit(Mono.Cecil.Cil.OpCodes.Pop);
+        }
+
+        // IL niceties
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool MatchesSequence(Instruction start, params Predicate<Instruction>[] sequence)
+        {
+            Instruction current = start;
+            for (int i = 0; i < sequence.Length; i++)
+            {
+                if (!sequence[i].Invoke(current))
+                {
+                    return false;
+                }
+                current = current.Next;
+            }
+            return true;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ReplaceNextFloat(this ILCursor cursor, float target, Func<float> dynamic_delegate)
+        {
+            cursor.GotoNext(next => next.MatchLdcR4(target));
+            cursor.PopNext();
+            cursor.EmitDelegate(dynamic_delegate);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ReplaceNextInt(this ILCursor cursor, int target, Func<int> dynamic_delegate)
+        {
+            cursor.GotoNext(next => next.MatchLdcI4(target));
+            cursor.PopNext();
+            cursor.EmitDelegate(dynamic_delegate);
         }
 
         public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)

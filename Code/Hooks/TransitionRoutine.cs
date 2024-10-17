@@ -4,7 +4,6 @@ using Mono.Cecil.Cil;
 using Monocle;
 using MonoMod.Cil;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -101,9 +100,18 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             */
 
 
+
             // if camera hooks exist, then this always runs. It's a small interpolation, so I don't care.
             // one interesting note is how if the zoom remains constant, this simplifies to currentZoom, which is intended behavior! Perfect!
             float zoomInterpolate = (_mid_transition_starting_zoom * _mid_transition_target_zoom) / (_mid_transition_target_zoom + t * (_mid_transition_starting_zoom - _mid_transition_target_zoom));
+
+
+
+            if (ShouldResize(_mid_transition_target_zoom, level, true))
+            {
+                ResizeVanillaBuffers(_mid_transition_target_zoom);
+            }
+
             level.Zoom = zoomInterpolate;
             level.ZoomTarget = zoomInterpolate;
             level.ZoomFocusPoint = new Vector2(160, 90) / zoomInterpolate;
