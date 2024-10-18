@@ -14,7 +14,6 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         public static void ForceCameraTo(this Level level, CameraFocus focus)
         {
             AutomaticZooming = false;
-            level.Camera.Position = focus.Position;
             level.Zoom = level.ZoomTarget = focus.Zoom;
             level.ZoomFocusPoint = new Vector2(160f, 90f) / focus.Zoom;
             level.Camera.Viewport.Width = (int)(320f / focus.Zoom);

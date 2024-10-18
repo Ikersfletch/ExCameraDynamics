@@ -1,6 +1,5 @@
 using Celeste.Mod.ExCameraDynamics.Code.Hooks;
 using Celeste.Mod.ExCameraDynamics.Code.Module;
-using Mono.Cecil.Cil;
 using MonoMod.ModInterop;
 using System;
 namespace Celeste.Mod.ExCameraDynamics
@@ -18,7 +17,7 @@ namespace Celeste.Mod.ExCameraDynamics
             {
                 CameraZoomHooks.Unhook();
                 return;
-            }
+            }   
 
             ExCameraAreaMetadata meta = ExCameraAreaMetadata.TryGetCameraMetadata(session);
 
@@ -32,23 +31,38 @@ namespace Celeste.Mod.ExCameraDynamics
                 meta.FillInSession();
             }
         }
-        public void LoadIntoLevel(On.Celeste.Level.orig_LoadLevel orig, Level self, Player.IntroTypes playerIntro, bool isFromLoader)
+
+        private void Level_OnLoadLevel(Level level, Player.IntroTypes playerIntro, bool isFromLoader)
         {
-            orig(self, playerIntro, isFromLoader);
             if (isFromLoader)
-                LoadCameraIntoSession(self.Session);
+                try
+                {
+                    LoadCameraIntoSession(level.Session);
+                } catch
+                {
+                    // undo the hooks that did load if there was a failure
+                    CameraZoomHooks.Unhook();
+                    throw;
+                }
+        }
+        private void Level_OnExit(Level level, LevelExit exit, LevelExit.Mode mode, Session session, HiresSnow snow)
+        {
+            CameraZoomHooks.Unhook();
         }
 
         public override void Load()
         {
             typeof(ExCameraInterop).ModInterop();
-            On.Celeste.Level.LoadLevel += LoadIntoLevel;
+            Everest.Events.Level.OnLoadLevel += Level_OnLoadLevel;
+            Everest.Events.Level.OnExit += Level_OnExit;
         }
+
 
         public override void Unload()
         {
             CameraZoomHooks.Unhook();
-            On.Celeste.Level.LoadLevel -= LoadIntoLevel;
+            Everest.Events.Level.OnLoadLevel -= Level_OnLoadLevel;
+            Everest.Events.Level.OnExit -= Level_OnExit;
         }
     }
 }

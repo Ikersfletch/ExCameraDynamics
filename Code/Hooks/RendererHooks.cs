@@ -16,7 +16,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             orig();
 
             // I could overwrite this method, or I could do this and recreate the buffers twice like a boss >:)
-            //ResizeVanillaBuffers(ZoomTarget);
+            ResizeVanillaBuffers(ZoomTarget);
 
             // Invoke the event
             OnBufferCreation?.Invoke(BufferWidthOverride, BufferHeightOverride);
@@ -59,6 +59,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 
         public static void ResizeBufferToZoom(VirtualRenderTarget target)
         {
+            if (target == null) return;
+
             if (target.Width == BufferHeightOverride && target.Height == BufferWidthOverride) return; // don't resize what doesn't need to be resized.
 
             target.Width = BufferWidthOverride;

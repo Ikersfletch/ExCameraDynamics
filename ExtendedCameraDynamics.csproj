@@ -47,15 +47,16 @@
 		<!-- 
 		<Reference Include="../../Celeste.dll" Publicize="true">
 			<Private>false</Private>
-        </Reference>
-        <Reference Include="../../MMHOOK_Celeste.dll" Publicize="true">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="../../FNA.dll" Publicize="true">
-            <Private>false</Private>
-        </Reference> 
+		</Reference>
+		<Reference Include="../../MMHOOK_Celeste.dll" Publicize="true">
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="../../FNA.dll" Publicize="true">
+			<Private>false</Private>
+		</Reference>
 		-->
-		
+
+
         <Reference Include="lib-stripped/Celeste.dll" Publicize="true">
             <Private>false</Private>
         </Reference>

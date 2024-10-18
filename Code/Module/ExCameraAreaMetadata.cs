@@ -13,10 +13,9 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
         {
             if (!Everest.Content.TryGet($"Maps/{session.MapData.Filename}.meta", out ModAsset asset))
                 return null;
-            if (!asset.PathVirtual.StartsWith("Maps")) return null;
-            if (!asset.TryDeserialize(out ExCameraYaml meta)) return null;
-            if (meta.ExCameraMetaData == null) return null;
-            return meta.ExCameraMetaData;
+            if (!(asset?.PathVirtual?.StartsWith("Maps") ?? false)) return null;
+            if (!(asset?.TryDeserialize(out ExCameraYaml meta) ?? false)) return null;
+            return meta?.ExCameraMetaData;
         }
         public bool EnableExtendedCamera { get; set; } = false;
         public float RestingZoomFactor { get; set; } = 1f;

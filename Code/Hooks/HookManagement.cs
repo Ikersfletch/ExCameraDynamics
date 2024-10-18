@@ -167,8 +167,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             IL.Celeste.AngryOshiro.Render += AngryOshiro_Render;
             IL.Celeste.MemorialText.Render += MemorialText_Render;
             IL.Celeste.FancyText.Parse += FancyText_Parse;
+            //IL.Celeste.BackdropRenderer.Render += BackdropRenderer_Render;
             hooks_enabled = true;
         }
+
 
         private static void DestroyHooks()
         {
@@ -279,6 +281,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             IL.Celeste.AngryOshiro.Render -= AngryOshiro_Render;
             IL.Celeste.MemorialText.Render -= MemorialText_Render;
             IL.Celeste.FancyText.Parse -= FancyText_Parse;
+            //IL.Celeste.BackdropRenderer.Render -= BackdropRenderer_Render;
             hooks_enabled = false;
         }
     }

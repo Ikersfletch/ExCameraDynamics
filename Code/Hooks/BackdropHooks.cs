@@ -11,7 +11,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 {
     public static partial class CameraZoomHooks
     {
-        private static float CurrentLevelZoom() => (Engine.Scene as Level)?.Zoom ?? 1f;
+        private static float CurrentLevelZoom() => (Engine.Scene as Level)?.Zoom ?? RestingZoomFactor;
         private static float VisibleWidth() => 320f / CurrentLevelZoom();
         private static float VisibleHeight() => 180f / CurrentLevelZoom();
         private static Vector2 VisibleDimensions() => new Vector2(320f, 180f) / CurrentLevelZoom();
@@ -208,13 +208,15 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         // TODO: Make this an IL hook
         private static void StarsBG_Render(On.Celeste.StarsBG.orig_Render orig, StarsBG self, Scene scene)
         {
-            float zoom = (scene as Level)?.Zoom ?? 1f;
+            float zoom = (scene as Level)?.Zoom ?? RestingZoomFactor;
 
+            /*
             if (zoom >= 1f)
             {
                 orig(self, scene);
                 return;
             }
+            */
 
             Draw.Rect(0f, 0f, BufferWidthOverride, BufferHeightOverride, Color.Black);
             Level level = scene as Level;
@@ -287,13 +289,15 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         // TODO: Make this an IL hook. It's totally doable.
         private static void WindSnowFG_Render(On.Celeste.WindSnowFG.orig_Render orig, WindSnowFG self, Scene scene)
         {
-            float zoom = (scene as Level)?.Zoom ?? 1f;
+            float zoom = (scene as Level)?.Zoom ?? RestingZoomFactor;
 
+            /*
             if (zoom >= 1f)
             {
                 orig(self, scene);
                 return;
             }
+            */
 
             if (self.Alpha <= 0f)
             {
@@ -866,5 +870,27 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             self.vertices = vertices.ToArray();
             self.vertexCount = vertices.Count;
         }
+        // I was wondering if I could make stylegrounds smoother-- will likely need a case-by-case basis.
+        /*
+        private static void BackdropRenderer_Render(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.Emit(OpCodes.Isinst, typeof(Level));
+            cursor.EmitDelegate<Action<Level>>((level) =>
+            {
+                level.Camera.Position += _camera_floating_decimal;
+            });
+
+            cursor.GotoNext(next => next.MatchRet());
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.Emit(OpCodes.Isinst, typeof(Level));
+            cursor.EmitDelegate<Action<Level>>((level) =>
+            {
+               level.Camera.Position -= _camera_floating_decimal;
+            });
+        }
+        */
     }
 }
