@@ -401,7 +401,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             ILCursor cursor = new ILCursor(il);
 
-            cursor.ReplaceNextFloat( 320f, GetBufferWidth);
+            cursor.ReplaceNextFloat( 320f, VisibleWidth);
 
             cursor.ReplaceNextFloat( 6f, _correct_talk_ui_scale_factor);
             cursor.ReplaceNextFloat( 6f, _correct_talk_ui_scale_factor);
@@ -763,7 +763,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             }
             TextInducedZoom node = (box.Nodes[box.index] as TextInducedZoom);
             if (node == null) return;
-            ExCameraCommands.ZoomToCameraReferenceFrame(node.EasyKey, node.Duration);
+            ExCameraCommands.ZoomToCameraReferenceFrame(node.EasyKey, node.Duration, true);
         }
 
         private static void Textbox_RunRoutine(ILContext il)

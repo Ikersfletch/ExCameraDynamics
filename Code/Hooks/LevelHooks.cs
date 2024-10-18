@@ -76,7 +76,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         }
 
 
-
+        private static Vector2 _camera_floating_decimal = new Vector2(0f,0f);
         // Check to see if the buffers need to be resized.
         private static void Level_BeforeRender(On.Celeste.Level.orig_BeforeRender orig, Level self)
         {
@@ -111,6 +111,13 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             self.Camera.Viewport.Width = (int)(320f / self.Zoom);
             self.Camera.Viewport.Height = (int)(180f / self.Zoom);
             self.ZoomFocusPoint = new Vector2(160f, 90f) / self.Zoom;
+
+            _camera_floating_decimal = self.Camera.Position - self.Camera.Position.Floor();
+
+            if (SaveData.Instance.VariantMode && SaveData.Instance.Assists.MirrorMode)
+            {
+                _camera_floating_decimal.X *= -1f;
+            }
 
             orig(self);
         }
@@ -155,12 +162,29 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         }
 
         private static float _level_render_override_zoom_target(Level level, float discarded_zoom_target) => level.Zoom;
+        private static Vector2 _level_render_smooth_camera_motion(Vector2 renderPos, Level level)
+        {
+            if (_camera_floating_decimal.X != 0f)
+            {
+                //throw new Exception($"{_camera_floating_decimal.X}");
+            }
+            float factor = (level.Zoom * ((320f - level.ScreenPadding * 2f) / 320f));
+            renderPos.X -= _camera_floating_decimal.X * factor;
+            renderPos.Y -= _camera_floating_decimal.Y * factor;
+
+            return renderPos;
+        }
         private static Vector2 _level_render_account_for_mirror_mode(Vector2 screen_space)
         {
+
+            /*             
+            */
+
             // I don't know why this works.
             // I don't need to do this outside of Mirror Mode.
             // Mathematically, I have no idea why this alone fixes it.
             // Oh well!
+
             if (SaveData.Instance.Assists.MirrorMode)
             {
                 screen_space.X /= 320f;
@@ -211,6 +235,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             cursor.Index++;
             // param in draw call
             cursor.GotoNext(next => next.MatchLdloc(5));
+            cursor.Index += 3;
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitDelegate<Func<Vector2, Level, Vector2>>(_level_render_smooth_camera_motion);
+
             cursor.Index++;
             // finally, we're here...
             cursor.GotoNext(next => next.MatchLdloc(5));
