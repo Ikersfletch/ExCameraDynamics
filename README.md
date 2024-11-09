@@ -1,4 +1,4 @@
-# Extended Camera Dynamics (v1.0.2)
+# Extended Camera Dynamics (v1.0.3)
 A Celeste mod (by me) that extends camera functionality.
 
 > Most Vanilla entities and backdrops should "just work" with this.
