@@ -34,6 +34,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
 
         public CameraZoomTrigger(EntityData data, Vector2 offset) : base(data, offset)
         {
+            Depth = (int)(-data.Position.X -data.Position.Y);
             ZoomMode = data.Enum<Mode>("mode", Mode.Start);
             ZoomFactorEnd = data.Float("zoomEnd", 1f);
             ZoomFactorStart = data.Float("zoomStart", 1f);

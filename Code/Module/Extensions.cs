@@ -1,5 +1,6 @@
 ﻿using Celeste.Mod.ExCameraDynamics.Code.Hooks;
 using Celeste.Mod.ExCameraDynamics.Code.Triggers;
+using ExtendedCameraDynamics.Code.Triggers;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using Monocle;
@@ -191,7 +192,7 @@ namespace Celeste.Mod.ExCameraDynamics
             float nearest_so_far = CameraZoomHooks.RestingZoomFactor;
             foreach (CameraZoomTrigger trigger in level.Tracker.Entities[typeof(CameraZoomTrigger)])
             {
-                if (!trigger.Active || !trigger.CollideCheck<Player>()) continue;
+                if (!trigger.Active || !trigger.CollideCheck(player)) continue;
                 if (trigger.ZoomMode == CameraZoomTrigger.Mode.Start)
                 {
                     nearest_so_far = Math.Min(nearest_so_far, trigger.ZoomFactorStart);
@@ -223,6 +224,11 @@ namespace Celeste.Mod.ExCameraDynamics
             return nearest_so_far;
         }
 
+        public static float GetTriggerSnapSpeed(this Player player)
+        {
+            return player.CollideFirst<CameraSnapTrigger>()?.SnapSpeed ?? CameraZoomHooks.CameraSnapSpeed;
+        }
+
         /// <summary>
         /// Moves the cursor ahead by one and emits pop.
         /// I use this in place of ILCursor.Remove() for simple value replacements.
@@ -231,7 +237,7 @@ namespace Celeste.Mod.ExCameraDynamics
         public static void PopNext(this ILCursor cursor)
         {
             cursor.Index++;
-            cursor.Emit(Mono.Cecil.Cil.OpCodes.Pop);
+            cursor.Emit(OpCodes.Pop);
         }
 
         // IL niceties

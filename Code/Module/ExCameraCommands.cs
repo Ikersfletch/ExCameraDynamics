@@ -9,7 +9,6 @@ namespace ExtendedCameraDynamics.Code.Module
 {
     public class ExCameraCommands
     {
-
         [Command("excam_is_active", "lets find out")]
         public static void IAMLOADED()
         {
@@ -35,10 +34,13 @@ namespace ExtendedCameraDynamics.Code.Module
             CameraZoomHooks.RestingZoomFactorOverride = factor;
         }
 
+        [Command("excam_set_snap_speed", "Sets the camera snapping speed to the specified factor. Negative values reset to default; Default is 1.")]
+        public static void SetSnappingSpeed(float speed) => CameraZoomHooks.SetSnappingSpeed(speed);
+
         [Command("excam_unstick_zoom", "forces automatic zooming if camera hooks are enabled.")]
         public static void ForceAutomaticZoom()
         {
-            (Engine.Scene as Level)?.Entities?.FindFirst<Dummy>()?.RemoveSelf();
+            (Engine.Scene as Level)?.Entities?.FindAll<Dummy>()?.ForEach((dummy) => dummy.RemoveSelf());
             CameraZoomHooks.AutomaticZooming = true;
         }
         //{

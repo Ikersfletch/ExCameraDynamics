@@ -163,10 +163,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         private static float _level_render_override_zoom_target(Level level, float discarded_zoom_target) => level.Zoom;
         private static Vector2 _level_render_smooth_camera_motion(Vector2 renderPos, Level level)
         {
-            if (_camera_floating_decimal.X != 0f)
-            {
-                //throw new Exception($"{_camera_floating_decimal.X}");
-            }
+            if (level.Zoom <= 1f) return renderPos;
+
             float factor = (level.Zoom * ((320f - level.ScreenPadding * 2f) / 320f));
             renderPos.X -= _camera_floating_decimal.X * factor;
             renderPos.Y -= _camera_floating_decimal.Y * factor;
@@ -175,10 +173,6 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         }
         private static Vector2 _level_render_account_for_mirror_mode(Vector2 screen_space)
         {
-
-            /*             
-            */
-
             // I don't know why this works.
             // I don't need to do this outside of Mirror Mode.
             // Mathematically, I have no idea why this alone fixes it.
@@ -189,6 +183,13 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
                 screen_space.X /= 320f;
                 screen_space.X *= BufferWidthOverride;
             }
+
+            if (VerticalMirroring)
+            {
+                screen_space.Y /= 180f;
+                screen_space.Y *= BufferHeightOverride;
+            }
+
             return screen_space;
         }
         public static void Level_Render(ILContext il)

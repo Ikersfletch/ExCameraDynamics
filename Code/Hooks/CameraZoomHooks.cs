@@ -45,9 +45,14 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             _resting_zoom_factor = factor;
         }
 
+        private static float _camera_snap_speed = 1f;
+        public static float CameraSnapSpeed => _camera_snap_speed >= 0f ? _camera_snap_speed : 1f;
+        public static void SetSnappingSpeed(float speed)
+        {
+            _camera_snap_speed = speed;
+        }
 
-
-
+        public static bool VerticalMirroring = false;
 
         public static int GetVisibleCameraWidth()
         {
@@ -266,6 +271,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         }
         public static Vector2 GetCameraInterpolation(Vector2 cameraPosition, Vector2 targetOffset, float t, Player player)
         {
+            t = Math.Clamp(t * player.GetTriggerSnapSpeed(), 0.0f, 1.0f);
 
             if (!AutomaticZooming)
             {

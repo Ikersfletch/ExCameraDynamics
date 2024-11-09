@@ -54,18 +54,18 @@
 		<Reference Include="../../FNA.dll" Publicize="true">
 			<Private>false</Private>
 		</Reference>
+
 		-->
 
-
-        <Reference Include="lib-stripped/Celeste.dll" Publicize="true">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="lib-stripped/MMHOOK_Celeste.dll" Publicize="true">
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="lib-stripped/FNA.dll" Publicize="true">
-            <Private>false</Private>
-        </Reference>
+		<Reference Include="lib-stripped/Celeste.dll" Publicize="true">
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="lib-stripped/MMHOOK_Celeste.dll" Publicize="true">
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="lib-stripped/FNA.dll" Publicize="true">
+			<Private>false</Private>
+		</Reference>
     </ItemGroup>
 
     <Target Name="CopyFiles" AfterTargets="Build">

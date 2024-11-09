@@ -38,6 +38,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
             CameraZoomHooks.ResizeBufferToZoom(target);
         }
 
+        public static void SetRenderVerticalMirroring(bool flipped) => CameraZoomHooks.VerticalMirroring = flipped;
+
         /// <summary>
         /// A drop-in replacement for <see cref="Level.ZoomBack(float)"/> <br></br>
         /// Replacing the original method via hooking is annoying- IEnumerator methods compile very peculiarly. <br></br>
@@ -84,6 +86,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
         
         public static Type Type_CameraFocusTarget() => typeof(CameraFocusTarget);
 
+        /// <summary> Multiplies the camera's interpolation by a fixed amount. </summary>
+        public static void SetSnappingSpeed(float speed) => CameraZoomHooks.SetSnappingSpeed(speed);
 
 
         // Used by Dependency2. 

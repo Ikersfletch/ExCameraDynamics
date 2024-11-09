@@ -27,8 +27,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             current_buffer_zoom = MathF.Min(1f, zoomTarget);
 
             // Find the dimensions
-            BufferWidthOverride = 1 + (current_buffer_zoom >= 1f ? 320 : (int)Math.Min(MaxBufferWidth, Math.Ceiling(320f / current_buffer_zoom)));
-            BufferHeightOverride = 1 + (current_buffer_zoom >= 1f ? 180 : (int)Math.Min(MaxBufferHeight, Math.Ceiling(180f / current_buffer_zoom)));
+            BufferWidthOverride = /*1 + */(current_buffer_zoom >= 1f ? 320 : (int)Math.Min(MaxBufferWidth, Math.Ceiling(320f / current_buffer_zoom)));
+            BufferHeightOverride = /* 1 +*/ (current_buffer_zoom >= 1f ? 180 : (int)Math.Min(MaxBufferHeight, Math.Ceiling(180f / current_buffer_zoom)));
 
             // resize all relevant vanilla buffers
             ResizeBufferToZoom(GameplayBuffers.Gameplay);
