@@ -33,42 +33,42 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Entities
             return new CameraFocus(cameraPosition + zoomFocusPoint - new Vector2(160f, 90f) / zoom, zoom);
         }
 
-        public static CameraFocus FullZoomEval(Level level)
+        public static CameraFocus FullZoomEval(Level level, bool usePlayerHashSet = false)
         {
-            return FullZoomEval(level.Tracker.GetEntity<Player>(), level);
+            return FullZoomEval(level.Tracker.GetEntity<Player>(), level, usePlayerHashSet);
         }
 
-        public static CameraFocus FullZoomEval(Player player)
+        public static CameraFocus FullZoomEval(Player player, bool usePlayerHashSet = false)
         {
-            return FullZoomEval(player, player.SceneAs<Level>());
+            return FullZoomEval(player, player.SceneAs<Level>(), usePlayerHashSet);
         }
-        public static CameraFocus FullZoomEval(Player player, Level level)
+        public static CameraFocus FullZoomEval(Player player, Level level, bool usePlayerHashSet = false)
         {
             float orig = level.Zoom;
-            level.Zoom = player.GetCameraZoomBounds(level).Nearest;
+            level.Zoom = player.GetCameraZoomBounds(level, usePlayerHashSet).Nearest;
             Vector2 cameraPos = player.CameraTarget;
             CameraFocus focus = new CameraFocus(cameraPos, level.Zoom);
             level.Zoom = orig;
             return focus;
         }
-        public static CameraFocus FullZoomEvalLoading(Player player, Level level)
+        public static CameraFocus FullZoomEvalLoading(Player player, Level level, bool usePlayerHashSet = false)
         {
             float orig = level.Zoom;
-            level.Zoom = player.GetCameraZoomUnsafe(level).Nearest;
+            level.Zoom = player.GetCameraZoomUnsafe(level, usePlayerHashSet).Nearest;
             Vector2 cameraPos = player.CameraTarget;
             CameraFocus focus = new CameraFocus(cameraPos, level.Zoom);
             level.Zoom = orig;
             return focus;
         }
-        public static CameraFocus FromZoomEval(Level level)
+        public static CameraFocus FromZoomEval(Level level, bool usePlayerHashSet = false)
         {
             Player player = level.Tracker?.GetEntity<Player>();
-            return CameraFocusTarget.GetOffsetFocus(level, player.Position, player.GetCameraZoomBounds());
+            return CameraFocusTarget.GetOffsetFocus(level, player.Position, player.GetCameraZoomBounds(usePlayerHashSet));
         }
 
-        public static CameraFocus FromZoomEval(Player player)
+        public static CameraFocus FromZoomEval(Player player, bool usePlayerHashSet = false)
         {
-            return CameraFocusTarget.GetOffsetFocus(player.SceneAs<Level>(), player.Position, player.GetCameraZoomBounds());
+            return CameraFocusTarget.GetOffsetFocus(player.SceneAs<Level>(), player.Position, player.GetCameraZoomBounds(usePlayerHashSet));
         }
 
         public static CameraFocus FromZoomEvalAtPoint(Level level, Vector2 worldPosition)

@@ -80,6 +80,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         public static float TriggerZoomOverride = -1f;
 
         private static float trigger_zoom_target = 1f;
+
+        public static ZoomBounds? MostRecentTriggerBounds = null;
         private static float ZoomTarget => TriggerZoomOverride > 0f ? TriggerZoomOverride : trigger_zoom_target;
 
         private static bool finished_update = true;
@@ -209,7 +211,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         // Enforces bounds to the new camera size- this implementation also focuses on the center of the room if the camera is larger than the room size.
         private static Vector2 _player_camera_target_trigger_position(Player player)
         {
-            CameraFocus focus = CameraFocus.FromZoomEval(player);
+            CameraFocus focus = CameraFocus.FromZoomEval(player, true);
             trigger_zoom_target = focus.Zoom;
             return focus.Position;
         }

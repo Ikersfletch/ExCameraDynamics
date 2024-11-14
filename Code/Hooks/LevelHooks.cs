@@ -295,6 +295,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             self.ForceCameraTo(CameraFocus.FullZoomEvalLoading(player, self));
             AutomaticZooming = true;
+            MostRecentTriggerBounds = null;
             //ResizeVanillaBuffers(self.Zoom);
         }
         public static void Level_LoadLevel_orig(ILContext il)

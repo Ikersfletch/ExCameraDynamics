@@ -1,4 +1,4 @@
-# Extended Camera Dynamics (v1.0.3)
+# Extended Camera Dynamics (v1.0.4)
 A Celeste mod (by me) that extends camera functionality.
 
 > Most Vanilla entities and backdrops should "just work" with this.
@@ -314,6 +314,8 @@ This helper mod only works with Loenn. I will only make it work with Loenn.
              regular behavior.
 	- `excam_set_resting_zoom`
 	   > Sets the default zoom to the specified factor. Negative values reset to the value specified in the Chapter's metadata.
+	- `excam_set_snap_speed`
+	   > Multiplies the camera's interpolation by the specified factor. Negative values reset to the value specified in the Chapter's metadata.
 
 ## Oh! also!!
 

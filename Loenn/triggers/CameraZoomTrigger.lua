@@ -5,6 +5,10 @@ ZoomTrigger.fieldOrder = {
     "x", "y", "width", "height", "mode","isMax", "zoomStart", "zoomEnd"
 }
 ZoomTrigger.fieldInformation = {
+    deleteFlag = {
+		fieldType = "string",
+		editable = true
+	},
 	zoomEnd = {
 		fieldType = "number"
 	},
@@ -33,7 +37,8 @@ ZoomTrigger.placements = {
 		zoomEnd = 1,
 		zoomStart = 1,
 		mode = "Start",
-		isMax = true
+		isMax = true,
+		deleteFlag = ""
     }
 }
 return ZoomTrigger

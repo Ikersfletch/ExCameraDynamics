@@ -54,8 +54,8 @@
 		<Reference Include="../../FNA.dll" Publicize="true">
 			<Private>false</Private>
 		</Reference>
-
 		-->
+
 
 		<Reference Include="lib-stripped/Celeste.dll" Publicize="true">
 			<Private>false</Private>

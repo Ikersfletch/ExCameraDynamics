@@ -136,9 +136,9 @@ namespace Celeste.Mod.ExCameraDynamics
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public static ZoomBounds GetCameraZoomBounds(this Player player)
+        public static ZoomBounds GetCameraZoomBounds(this Player player, bool usePlayerHashSet = false)
         {
-            return player.GetCameraZoomBounds(player.SceneAs<Level>());
+            return player.GetCameraZoomBounds(player.SceneAs<Level>(), usePlayerHashSet);
         }
         /// <summary>
         /// 
@@ -146,14 +146,14 @@ namespace Celeste.Mod.ExCameraDynamics
         /// <param name="player"></param>
         /// <param name="level"></param>
         /// <returns>value.X => minimum zoom factor<br></br>value.Y => maximum zoom factor</returns>
-        public static ZoomBounds GetCameraZoomBounds(this Player player, Level level)
+        public static ZoomBounds GetCameraZoomBounds(this Player player, Level level, bool usePlayerHashSet = false)
         {
             if (!player.InControl || (level?.InCutscene ?? true)) return new ZoomBounds(level?.Zoom ?? CameraZoomHooks.RestingZoomFactor);
 
-            return GetCameraZoomUnsafe(player, level);
+            return GetCameraZoomUnsafe(player, level, usePlayerHashSet);
         }
 
-        public static ZoomBounds GetCameraZoomUnsafe(this Player player, Level level)
+        public static ZoomBounds GetCameraZoomUnsafe(this Player player, Level level, bool usePlayerHashSet = false)
         {
             if (CameraZoomHooks.TriggerZoomOverride > 0f)
             {
@@ -164,20 +164,48 @@ namespace Celeste.Mod.ExCameraDynamics
             float zoomFurthestFactor = -1f;
             Vector2 playerCenter = player.Center;
 
-            foreach (CameraZoomTrigger trigger in level.Tracker.Entities[typeof(CameraZoomTrigger)])
+            if (usePlayerHashSet)
             {
-                if (!trigger.Active || !trigger.CollideCheck(player)) continue;
-                if (trigger.ZoomBoundary == CameraZoomTrigger.Boundary.SetsNearest)
+                // this mimics vanilla behavior with CameraTargetTriggers.
+                if (CameraZoomHooks.MostRecentTriggerBounds.HasValue)
                 {
-                    if (zoomNearestFactor > 0) continue;
-                    zoomNearestFactor = trigger.GetZoom(playerCenter);
-                    if (zoomFurthestFactor > 0) break; // both have been set, so stop looping
-                    continue;
+                    return CameraZoomHooks.MostRecentTriggerBounds.Value;
                 }
-                if (zoomFurthestFactor > 0) continue;
-                zoomFurthestFactor = trigger.GetZoom(playerCenter);
-                if (zoomNearestFactor > 0) break; // both have been set, stop looping
+
+                foreach (Trigger baseTrigger in player.triggersInside)
+                {
+                    CameraZoomTrigger trigger = baseTrigger as CameraZoomTrigger;
+                    if (!(trigger?.IsActive(level) ?? false)) continue;
+                    if (trigger.ZoomBoundary == CameraZoomTrigger.Boundary.SetsNearest)
+                    {
+                        if (zoomNearestFactor > 0) continue;
+                        zoomNearestFactor = trigger.GetZoom(playerCenter);
+                        if (zoomFurthestFactor > 0) break; // both have been set, so stop looping
+                        continue;
+                    }
+                    if (zoomFurthestFactor > 0) continue;
+                    zoomFurthestFactor = trigger.GetZoom(playerCenter);
+                    if (zoomNearestFactor > 0) break; // both have been set, stop looping
+                }
             }
+            else
+            {
+                foreach (CameraZoomTrigger trigger in level.Tracker.Entities[typeof(CameraZoomTrigger)])
+                {
+                    if (!trigger.IsActive(level) || !trigger.CollideCheck(player)) continue;
+                    if (trigger.ZoomBoundary == CameraZoomTrigger.Boundary.SetsNearest)
+                    {
+                        if (zoomNearestFactor > 0) continue;
+                        zoomNearestFactor = trigger.GetZoom(playerCenter);
+                        if (zoomFurthestFactor > 0) break; // both have been set, so stop looping
+                        continue;
+                    }
+                    if (zoomFurthestFactor > 0) continue;
+                    zoomFurthestFactor = trigger.GetZoom(playerCenter);
+                    if (zoomNearestFactor > 0) break; // both have been set, stop looping
+                }
+            }
+            
 
             return new ZoomBounds(zoomFurthestFactor, zoomNearestFactor);
         }
@@ -192,7 +220,7 @@ namespace Celeste.Mod.ExCameraDynamics
             float nearest_so_far = CameraZoomHooks.RestingZoomFactor;
             foreach (CameraZoomTrigger trigger in level.Tracker.Entities[typeof(CameraZoomTrigger)])
             {
-                if (!trigger.Active || !trigger.CollideCheck(player)) continue;
+                if (!trigger.IsActive(level) || !trigger.CollideCheck(player)) continue;
                 if (trigger.ZoomMode == CameraZoomTrigger.Mode.Start)
                 {
                     nearest_so_far = Math.Min(nearest_so_far, trigger.ZoomFactorStart);
@@ -213,7 +241,7 @@ namespace Celeste.Mod.ExCameraDynamics
             float nearest_so_far = CameraZoomHooks.RestingZoomFactor;
             foreach (CameraZoomTrigger trigger in level.Tracker.Entities[typeof(CameraZoomTrigger)])
             {
-                if (!trigger.Active || !trigger.CollidePoint(position)) continue;
+                if (!trigger.IsActive(level) || !trigger.CollidePoint(position)) continue;
                 if (trigger.ZoomMode == CameraZoomTrigger.Mode.Start)
                 {
                     nearest_so_far = Math.Min(nearest_so_far, trigger.ZoomFactorStart);
