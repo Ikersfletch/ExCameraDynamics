@@ -225,6 +225,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             int height = (width * 9) / 16;
             return ClampedToLevel(result, width, height, level);
         }
+        private static Vector2 _fix_anchor_offset(Vector2 anchor, Level level) => anchor + new Vector2(160f, 90f) * (1f - 1f/ (level?.Zoom ?? 1f));
         public static void PlayerCameraTarget(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
@@ -247,6 +248,18 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             {
                 cursor.PopNext();
                 cursor.EmitDelegate<Func<float>>(VisibleHeight);
+            }
+
+
+            cursor.Index = 0;
+            // now we replace all instances of CameraAnchor accordingly.
+
+            while (cursor.TryGotoNext(next => next.MatchLdfld<Player>("CameraAnchor")))
+            {
+                cursor.Index++;
+                cursor.Emit(OpCodes.Ldarg_0);
+                cursor.Emit(OpCodes.Ldfld, typeof(Player).GetField("level", BindingFlags.Instance | BindingFlags.NonPublic));
+                cursor.EmitDelegate<Func<Vector2, Level, Vector2>>(_fix_anchor_offset);
             }
         }
 
@@ -782,5 +795,6 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             cursor.Emit(OpCodes.Ldloc_1); // Textbox this
             cursor.EmitDelegate<Action<Textbox>>(_textbox_run_routine_trigger_focus_camera);
         }
+
     }
-}
+    }

@@ -171,7 +171,6 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             hooks_enabled = true;
         }
 
-
         private static void DestroyHooks()
         {
             hooks_enabled = false;

@@ -1,5 +1,6 @@
 using Celeste.Mod.ExCameraDynamics.Code.Hooks;
 using Celeste.Mod.ExCameraDynamics.Code.Module;
+using Monocle;
 using MonoMod.ModInterop;
 using System;
 namespace Celeste.Mod.ExCameraDynamics
@@ -34,10 +35,13 @@ namespace Celeste.Mod.ExCameraDynamics
 
         private void Level_OnLoadLevel(Level level, Player.IntroTypes playerIntro, bool isFromLoader)
         {
+            bool loaded = CameraZoomHooks.HooksEnabled;
             if (isFromLoader)
                 try
                 {
                     LoadCameraIntoSession(level.Session);
+                    CameraZoomHooks.MostRecentTriggerBounds = null;
+
                 } catch
                 {
                     // undo the hooks that did load if there was a failure
