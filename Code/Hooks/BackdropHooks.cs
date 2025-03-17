@@ -62,14 +62,24 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             cursor.PopNext();
             cursor.Emit(OpCodes.Ldarg_1); // ldarg1 = scene
             cursor.Emit(OpCodes.Isinst, typeof(Level)); // as Level
-            cursor.EmitDelegate<Func<Level, float>>(GetCameraWidth); // this is not always equal to the buffer size- the buffer may be larger.
+            cursor.EmitDelegate<Func<Level, float>>(GetParallaxWidth); // this is not always equal to the buffer size- the buffer may be larger.
 
             // height:
             cursor.GotoNext(next => next.MatchLdcR4(180f));
             cursor.PopNext();
             cursor.Emit(OpCodes.Ldarg_1); // ldarg1 = scene
             cursor.Emit(OpCodes.Isinst, typeof(Level)); // as Level
-            cursor.EmitDelegate<Func<Level, float>>(GetCameraHeight);
+            cursor.EmitDelegate<Func<Level, float>>(GetParallaxHeight);
+        }
+
+        private static float GetParallaxWidth(Level level)
+        {
+            return MathF.Ceiling(320f / MathF.Min(1f, level.Zoom));
+        }
+
+        private static float GetParallaxHeight(Level level)
+        {
+            return MathF.Ceiling(180f / MathF.Min(1f, level.Zoom));
         }
 
         private static void Parallax_orig_Render(ILContext il)
@@ -95,14 +105,14 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             cursor.PopNext();
             cursor.Emit(OpCodes.Ldarg_1); // ldarg1 = scene
             cursor.Emit(OpCodes.Isinst, typeof(Level));
-            cursor.EmitDelegate<Func<Level, float>>(GetCameraHeight);
+            cursor.EmitDelegate<Func<Level, float>>(GetParallaxHeight);
 
             // outer loop:
             cursor.GotoNext(next => next.MatchLdcR4(320f));
             cursor.PopNext();
             cursor.Emit(OpCodes.Ldarg_1); // ldarg1 = scene
             cursor.Emit(OpCodes.Isinst, typeof(Level));
-            cursor.EmitDelegate<Func<Level, float>>(GetCameraWidth);
+            cursor.EmitDelegate<Func<Level, float>>(GetParallaxWidth);
         }
 
         private static void _starfield_repeat_renders(MTexture texture, Vector2 position, Color color, Starfield self)

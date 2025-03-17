@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+using System.Text;
 
 namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 {
@@ -90,7 +91,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             return
                 (
-                    (pass_auto || AutomaticZooming) && current_buffer_zoom != trigger_nearest_zoom && ( // the buffer could be resized...
+                    /*(pass_auto || AutomaticZooming) && */ current_buffer_zoom != trigger_nearest_zoom && ( // the buffer could be resized...
                         (current_buffer_zoom > trigger_nearest_zoom && self.Zoom < current_buffer_zoom) || // we need to enlarge the buffer for what the zoom could be within this trigger...
                         (self.Zoom >= trigger_nearest_zoom && self.Zoom >= current_buffer_zoom)  // OR we're more zoomed in than we could possibly need to be and the buffer's larger than the screen
                     )
@@ -173,7 +174,6 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         // I am aware that many of these methods are redundant.
         public static float GetCameraWidth(Level level)
         {
-            //if (level.Zoom >= 1f) return 320;
             return MathF.Ceiling(320f / level.Zoom);
         }
         public static float GetHalfCameraWidth(Level level)
@@ -225,7 +225,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             int height = (width * 9) / 16;
             return ClampedToLevel(result, width, height, level);
         }
-        private static Vector2 _fix_anchor_offset(Vector2 anchor, Level level) => anchor + new Vector2(160f, 90f) * (1f - 1f/ (level?.Zoom ?? 1f));
+        private static Vector2 _fix_anchor_offset(Vector2 anchor, Level level) => anchor + new Vector2(160f, 90f) * (1f - 1f / (level?.Zoom ?? 1f));
         public static void PlayerCameraTarget(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
@@ -286,13 +286,17 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         }
         public static Vector2 GetCameraInterpolation(Vector2 cameraPosition, Vector2 targetOffset, float t, Player player)
         {
+            if (!HooksEnabled)
+            {
+                return cameraPosition + targetOffset * t;
+            }
+
             t = Math.Clamp(t * player.GetTriggerSnapSpeed(), 0.0f, 1.0f);
 
             if (!AutomaticZooming)
             {
                 return cameraPosition + targetOffset * t;
             }
-
 
             Level level = player.level;
 
@@ -400,7 +404,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             ILCursor cursor = new ILCursor(il);
             cursor.ReplaceNextFloat(320f, VisibleWidth);
-            cursor.ReplaceNextFloat( 180f, VisibleHeight);
+            cursor.ReplaceNextFloat(180f, VisibleHeight);
 
             cursor.GotoNext(next => next.OpCode == OpCodes.Stloc_0);
             cursor.Index++;
@@ -422,10 +426,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             ILCursor cursor = new ILCursor(il);
 
-            cursor.ReplaceNextFloat( 320f, VisibleWidth);
+            cursor.ReplaceNextFloat(320f, VisibleWidth);
 
-            cursor.ReplaceNextFloat( 6f, _correct_talk_ui_scale_factor);
-            cursor.ReplaceNextFloat( 6f, _correct_talk_ui_scale_factor);
+            cursor.ReplaceNextFloat(6f, _correct_talk_ui_scale_factor);
+            cursor.ReplaceNextFloat(6f, _correct_talk_ui_scale_factor);
         }
 
         private static float mod(float x, float m)
@@ -437,7 +441,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             ILCursor cursor = new ILCursor(il);
 
-            cursor.ReplaceNextFloat( 180f,
+            cursor.ReplaceNextFloat(180f,
                 GetBufferHeight
             );
         }
@@ -532,16 +536,16 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             //FlingBird
             ILCursor cursor = new ILCursor(il);
 
-            cursor.ReplaceNextFloat( 145f,
+            cursor.ReplaceNextFloat(145f,
                 () => 145f / CurrentLevelZoom()
             );
-            cursor.ReplaceNextFloat( 215f,
+            cursor.ReplaceNextFloat(215f,
                 () => 215f / CurrentLevelZoom()
             );
-            cursor.ReplaceNextFloat( 85f,
+            cursor.ReplaceNextFloat(85f,
                 () => 85f / CurrentLevelZoom()
             );
-            cursor.ReplaceNextFloat( 95f,
+            cursor.ReplaceNextFloat(95f,
                 () => 95f / CurrentLevelZoom()
             );
 
@@ -559,10 +563,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             //BadelineBoost
             ILCursor cursor = new ILCursor(il);
 
-            cursor.ReplaceNextFloat( 200f,
+            cursor.ReplaceNextFloat(200f,
                 () => VisibleWidth() - 120f
             );
-            cursor.ReplaceNextFloat( 120f,
+            cursor.ReplaceNextFloat(120f,
                 () => VisibleHeight() - 60f
             );
 
@@ -600,39 +604,39 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             ILCursor cursor = new ILCursor(il);
 
-            cursor.ReplaceNextFloat( 160f,
+            cursor.ReplaceNextFloat(160f,
                 () => VisibleWidth() * 0.5f
             );
-            cursor.ReplaceNextFloat( 90f,
+            cursor.ReplaceNextFloat(90f,
                 () => VisibleHeight() * 0.5f
             );
 
             // if (nodes == null)
             {
                 // resets X speed if hits the side
-                cursor.ReplaceNextFloat( 320f, VisibleWidth);
+                cursor.ReplaceNextFloat(320f, VisibleWidth);
                 // subtract from level bounds to clamp
-                cursor.ReplaceNextInt( 320, () => (int)Math.Ceiling(VisibleWidth()));
+                cursor.ReplaceNextInt(320, () => (int)Math.Ceiling(VisibleWidth()));
                 cursor.Index += 3;
                 // if the camera is wider than the room, center the camera.
                 // otherwise, use the clamped value.
                 cursor.EmitDelegate<Func<float, float>>(_lookout_look_routine_center_camera_width);
                 // test if the camera would overlap a LookoutBlocker
-                cursor.ReplaceNextFloat( 320f, VisibleWidth);
-                cursor.ReplaceNextFloat( 180f, VisibleHeight);
+                cursor.ReplaceNextFloat(320f, VisibleWidth);
+                cursor.ReplaceNextFloat(180f, VisibleHeight);
 
 
                 // resets Y speed if hits the top/bottom
-                cursor.ReplaceNextFloat( 180f, VisibleHeight);
+                cursor.ReplaceNextFloat(180f, VisibleHeight);
                 // subtract from level bounds to clamp
-                cursor.ReplaceNextInt( 180, () => (int)Math.Ceiling(VisibleHeight()));
+                cursor.ReplaceNextInt(180, () => (int)Math.Ceiling(VisibleHeight()));
                 cursor.Index += 3;
                 // if the camera is taller than the room, center the camera.
                 // otherwise, use the clamped value.
                 cursor.EmitDelegate<Func<float, float>>(_lookout_look_routine_center_camera_height);
                 // test if the camera would overlap a LookoutBlocker
-                cursor.ReplaceNextFloat( 320f, VisibleWidth);
-                cursor.ReplaceNextFloat( 180f, VisibleHeight);
+                cursor.ReplaceNextFloat(320f, VisibleWidth);
+                cursor.ReplaceNextFloat(180f, VisibleHeight);
             }
             // I was originally going to add additional function to the pathed version as well...
             // Instead, that function was moved to a custom watchtower class: ReferenceFrameLookout
@@ -650,11 +654,11 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             ILCursor cursor = new ILCursor(il);
 
-            cursor.ReplaceNextFloat( 160f, () => 80f);
-            cursor.ReplaceNextFloat( 90f, () => 45f);
+            cursor.ReplaceNextFloat(160f, () => 80f);
+            cursor.ReplaceNextFloat(90f, () => 45f);
 
-            cursor.ReplaceNextFloat( 260f, () => VisibleWidth() - 60f);
-            cursor.ReplaceNextFloat( 120f, () => VisibleHeight() - 60f);
+            cursor.ReplaceNextFloat(260f, () => VisibleWidth() - 60f);
+            cursor.ReplaceNextFloat(120f, () => VisibleHeight() - 60f);
 
             ReplaceLevelZoomSnap(cursor);
             ReplaceLevelZoomBack(cursor);
@@ -662,17 +666,17 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             cursor.GotoNext(next => next.MatchCallvirt<Camera>("set_Position"));
             cursor.EmitDelegate<Func<Vector2, Vector2>>(cassette_collect_routine_retain_camera_position);
 
-            cursor.ReplaceNextFloat( 160f, () => 160f / CurrentLevelZoom());
-            cursor.ReplaceNextFloat( 90f, () => 90f / CurrentLevelZoom());
+            cursor.ReplaceNextFloat(160f, () => 160f / CurrentLevelZoom());
+            cursor.ReplaceNextFloat(90f, () => 90f / CurrentLevelZoom());
         }
 
 
         private static void BirdTutorialGui_Render(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
-            cursor.ReplaceNextFloat( 320f, () => VisibleWidth());
-            cursor.ReplaceNextFloat( 6f, () => 6f * CurrentLevelZoom());
-            cursor.ReplaceNextFloat( 6f, () => 6f * CurrentLevelZoom());
+            cursor.ReplaceNextFloat(320f, () => VisibleWidth());
+            cursor.ReplaceNextFloat(6f, () => 6f * CurrentLevelZoom());
+            cursor.ReplaceNextFloat(6f, () => 6f * CurrentLevelZoom());
         }
 
         private static void _angry_oshiro_repeat_renders(Image lightning, Level level)
@@ -699,9 +703,9 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         private static void MemorialText_Render(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
-            cursor.ReplaceNextFloat( 6f, () => 6f * CurrentLevelZoom());
-            cursor.ReplaceNextFloat( 6f, () => 6f * CurrentLevelZoom());
-            cursor.ReplaceNextFloat( 350f, () => 350f * CurrentLevelZoom());
+            cursor.ReplaceNextFloat(6f, () => 6f * CurrentLevelZoom());
+            cursor.ReplaceNextFloat(6f, () => 6f * CurrentLevelZoom());
+            cursor.ReplaceNextFloat(350f, () => 350f * CurrentLevelZoom());
         }
 
         // Add 'focus_camera' dialog keyword:
@@ -711,7 +715,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             public string EasyKey;
             public float Duration;
         }
-        private class TextInducedZoomReset : FancyText.Node {}
+        private class TextInducedZoomReset : FancyText.Node { }
 
         // insert the zoom command into the Text nodes...
         private static void _fancyText_parse_insert_zoom_node(FancyText.Text group, List<string> parameters)
@@ -730,6 +734,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         }
         private static void FancyText_Parse(ILContext il)
         {
+            //FancyText
             ILCursor cursor = new ILCursor(il);
             // get into position
             cursor.GotoNext(next => next.MatchLdstr("anchor"));
@@ -757,7 +762,18 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             cursor.Index += 1;
 
             cursor.Emit(OpCodes.Ldloc, 8); // list
-            cursor.EmitDelegate<Func<string, List<string>, bool>>((text, parameters) => text == "focus_camera" || text == "reset_camera");
+            cursor.EmitDelegate<Func<string, List<string>, bool>>((text, parameters) =>
+            {
+                string t = text.Trim();
+
+                if (String.IsNullOrEmpty(t))
+                {
+                    t = parameters[0].Trim();
+                    parameters.RemoveAt(0);
+                }
+
+                return t.Equals("focus_camera") || t.Equals("reset_camera");
+            });
             cursor.Emit(OpCodes.Brfalse_S, no_match);
 
             // {
@@ -796,5 +812,9 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             cursor.EmitDelegate<Action<Textbox>>(_textbox_run_routine_trigger_focus_camera);
         }
 
+        private static Vector2 Camera_CameraToScreen(On.Monocle.Camera.orig_CameraToScreen orig, Camera self, Microsoft.Xna.Framework.Vector2 position)
+        {
+            return (position - self.Position);// / ((Engine.Scene as Level)?.Zoom ?? 1f);
+        }
     }
-    }
+}

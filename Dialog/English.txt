@@ -17,6 +17,13 @@ LilacIsle_EX_CAMERA_DYNAMICS_TEST_FOCUS=
 	
 
 	[MADELINE right normal]
+	{^ 1.5}
 	Don't worry! It gets better, though.
 
 	{reset_camera}
+
+GlerG_TestCutscene=
+  hello
+  hi
+  {    					focus_camera test 3.0 }
+  wow

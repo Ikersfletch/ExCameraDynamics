@@ -298,6 +298,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             MostRecentTriggerBounds = null;
             //ResizeVanillaBuffers(self.Zoom);
         }
+        private static Vector2 _level_loadlevel_alter_spotlight_wipe(Vector2 original, Level self)
+        {
+            return original * self.Zoom;
+        }
         public static void Level_LoadLevel_orig(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
@@ -321,6 +325,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldloc, 53);
             cursor.EmitDelegate<Action<Level,Player>>(_level_loadlevel_reset_buffers);
+
+            cursor.GotoNext(next => next.MatchStsfld(typeof(SpotlightWipe), "FocusPoint"));
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitDelegate<Func<Vector2, Level, Vector2>>(_level_loadlevel_alter_spotlight_wipe);
         }
 
         private static Vector2 Level_ScreenToWorld(On.Celeste.Level.orig_ScreenToWorld orig, Level self, Vector2 screen_position)

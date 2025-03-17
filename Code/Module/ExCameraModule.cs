@@ -1,8 +1,7 @@
 using Celeste.Mod.ExCameraDynamics.Code.Hooks;
 using Celeste.Mod.ExCameraDynamics.Code.Module;
-using Monocle;
+using Microsoft.Xna.Framework;
 using MonoMod.ModInterop;
-using System;
 namespace Celeste.Mod.ExCameraDynamics
 {
     public class ExCameraModule : EverestModule
@@ -35,19 +34,28 @@ namespace Celeste.Mod.ExCameraDynamics
 
         private void Level_OnLoadLevel(Level level, Player.IntroTypes playerIntro, bool isFromLoader)
         {
-            bool loaded = CameraZoomHooks.HooksEnabled;
             if (isFromLoader)
+            {
                 try
                 {
                     LoadCameraIntoSession(level.Session);
                     CameraZoomHooks.MostRecentTriggerBounds = null;
 
-                } catch
+                }
+                catch
                 {
                     // undo the hooks that did load if there was a failure
                     CameraZoomHooks.Unhook();
                     throw;
                 }
+
+                if (CameraZoomHooks.HooksEnabled)
+                {
+                    level.Zoom = level.ZoomTarget = CalcPlus.GetTriggerZoomAtPosition(level, level.Session.RespawnPoint.Value);
+                    level.Camera.Position = level.GetFullCameraTargetAt(level.Tracker.GetEntity<Player>(), level.Session.RespawnPoint.Value);
+                }
+            }
+
         }
         private void Level_OnExit(Level level, LevelExit exit, LevelExit.Mode mode, Session session, HiresSnow snow)
         {

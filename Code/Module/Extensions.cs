@@ -223,10 +223,10 @@ namespace Celeste.Mod.ExCameraDynamics
                 if (!trigger.IsActive(level) || !trigger.CollideCheck(player)) continue;
                 if (trigger.ZoomMode == CameraZoomTrigger.Mode.Start)
                 {
-                    nearest_so_far = Math.Min(nearest_so_far, trigger.ZoomFactorStart);
+                    nearest_so_far = Math.Min(nearest_so_far, trigger.StartZF);
                     continue;
                 }
-                nearest_so_far = Math.Min(nearest_so_far, Math.Min(trigger.ZoomFactorEnd, trigger.ZoomFactorStart));
+                nearest_so_far = Math.Min(nearest_so_far, Math.Min(trigger.EndZF, trigger.StartZF));
             }
             return nearest_so_far;
         }
@@ -244,7 +244,7 @@ namespace Celeste.Mod.ExCameraDynamics
                 if (!trigger.IsActive(level) || !trigger.CollidePoint(position)) continue;
                 if (trigger.ZoomMode == CameraZoomTrigger.Mode.Start)
                 {
-                    nearest_so_far = Math.Min(nearest_so_far, trigger.ZoomFactorStart);
+                    nearest_so_far = Math.Min(nearest_so_far, trigger.StartZF);
                     continue;
                 }
                 nearest_so_far = trigger.GetZoom(position);
@@ -254,7 +254,7 @@ namespace Celeste.Mod.ExCameraDynamics
 
         public static float GetTriggerSnapSpeed(this Player player)
         {
-            return player.CollideFirst<CameraSnapTrigger>()?.SnapSpeed ?? CameraZoomHooks.CameraSnapSpeed;
+            return player.CollideFirst<CameraSnapTrigger>()?.Snap ?? CameraZoomHooks.CameraSnapSpeed;
         }
 
         /// <summary>
@@ -301,6 +301,62 @@ namespace Celeste.Mod.ExCameraDynamics
         public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
         {
             foreach(T t in enumerable) action(t);
+        }
+        internal interface IFloatSource
+        {
+            float Value { get; }
+        }
+        internal class RawFloat : IFloatSource
+        {
+            float raw;
+            public float Value => raw;
+            public RawFloat(float raw)
+            {
+                this.raw = raw;
+            }
+        }
+        internal class SesFloat : IFloatSource
+        {
+            Session.Slider slider;
+            public float Value => slider.Value;
+            public SesFloat(Session.Slider slider)
+            {
+                this.slider = slider;
+            }
+        }
+
+        internal class NulFloat : IFloatSource
+        {
+            public string name = "";
+            public float Value => NonZero((Engine.Scene as Level)?.Session?.GetSlider(name) ?? 1.0f);
+            private float NonZero(float val) => val == 0.0f ? 1.0f : val;
+            public NulFloat(string name)
+            {
+                this.name = name;
+            }
+        }
+        internal static IFloatSource CreateFloatSource(EntityData data, Session session, string name)
+        {
+            string attr = data.Attr(name, "");
+
+            if (attr == "")
+            {
+                return new RawFloat(1.0f);
+            }
+
+            if (float.TryParse(attr, out float parsed))
+            {
+                return new RawFloat(parsed);
+            }
+
+            Session.Slider slider = session?.GetSliderObject(attr);
+
+            if (slider != null)
+            {
+                return new SesFloat(slider);
+            }
+
+            return new NulFloat(name);
         }
     }
 }

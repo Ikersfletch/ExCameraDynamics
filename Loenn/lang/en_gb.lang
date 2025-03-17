@@ -6,9 +6,11 @@ entities.ExCameraDynamics/ReferenceFrameLookout.placements.name.default=Watchtow
 
 # Camera Zoom Trigger
 triggers.ExCameraDynamics/CameraZoomTrigger.placements.name.default=Camera Zoom Trigger
+triggers.ExCameraDynamics/CameraSliderZoomTrigger.placements.name.default=Camera Zoom Trigger (Session Slider)
 
 # Camera Snap Trigger
 triggers.ExCameraDynamics/CameraSnapTrigger.placements.name.default=Camera Snap Trigger
+triggers.ExCameraDynamics/CameraSliderSnapTrigger.placements.name.default=Camera Snap Trigger (Session Slider)
 
 # Backdrops
 style.effects.ExCameraDynamics/ZoomParallax.name=Zoom Parallax [Extended Camera Dynamics]

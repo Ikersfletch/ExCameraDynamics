@@ -44,7 +44,6 @@
         <PackageReference Include="MonoMod.RuntimeDetour" Version="22.07.31.01" PrivateAssets="all" ExcludeAssets="runtime" />
         <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
 
-		<!-- 
 		<Reference Include="../../Celeste.dll" Publicize="true">
 			<Private>false</Private>
 		</Reference>
@@ -54,9 +53,9 @@
 		<Reference Include="../../FNA.dll" Publicize="true">
 			<Private>false</Private>
 		</Reference>
-		-->
 
 
+		<!-- 
 		<Reference Include="lib-stripped/Celeste.dll" Publicize="true">
 			<Private>false</Private>
 		</Reference>
@@ -66,6 +65,7 @@
 		<Reference Include="lib-stripped/FNA.dll" Publicize="true">
 			<Private>false</Private>
 		</Reference>
+		-->
     </ItemGroup>
 
     <Target Name="CopyFiles" AfterTargets="Build">

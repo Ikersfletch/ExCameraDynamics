@@ -5,9 +5,10 @@ using Monocle;
 using System;
 using System.Collections.Generic;
 
+
 namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
 {
-    [Tracked]
+    [Tracked(true)]
     [CustomEntity("ExCameraDynamics/CameraZoomTrigger")]
     public class CameraZoomTrigger : Trigger
     {
@@ -20,8 +21,15 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
             RightToLeft
         }
         public Mode ZoomMode;
+        
+        // I was a fool and made these fields public.
+
         public float ZoomFactorEnd = 1f;
         public float ZoomFactorStart = 1f;
+
+        // suffer the redundancy of backwards compatibility with foolishness...
+        public virtual float EndZF { get => ZoomFactorEnd; set => ZoomFactorEnd = value; }
+        public virtual float StartZF { get => ZoomFactorStart; set => ZoomFactorStart = value; }
 
         /// <summary>
         /// <see cref="Boundary.SetsNearest"/>: (default) this trigger sets how zoomed in the camera is allowed to be- a maximum on the zoom factor<br></br>
@@ -41,8 +49,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
         {
             Depth = (int)(-data.Position.X -data.Position.Y);
             ZoomMode = data.Enum<Mode>("mode", Mode.Start);
-            ZoomFactorEnd = data.Float("zoomEnd", 1f);
-            ZoomFactorStart = data.Float("zoomStart", 1f);
+            EndZF = data.Float("zoomEnd", 1f);
+            StartZF = data.Float("zoomStart", 1f);
             ZoomBoundary = data.Bool("isMax", true) ? Boundary.SetsNearest : Boundary.SetsFurthest;
             DeleteFlag = data.Attr("deleteFlag", "");
         }
@@ -101,15 +109,15 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
             switch (ZoomMode)
             {
                 case Mode.TopToBottom:
-                    return Calc.ClampedMap(position.Y, Top, Bottom, ZoomFactorStart, ZoomFactorEnd);
+                    return Calc.ClampedMap(position.Y, Top, Bottom, StartZF, EndZF);
                 case Mode.BottomToTop:
-                    return Calc.ClampedMap(position.Y, Bottom, Top, ZoomFactorStart, ZoomFactorEnd);
+                    return Calc.ClampedMap(position.Y, Bottom, Top, StartZF, EndZF);
                 case Mode.LeftToRight:
-                    return Calc.ClampedMap(position.X, Left, Right, ZoomFactorStart, ZoomFactorEnd);
+                    return Calc.ClampedMap(position.X, Left, Right, StartZF, EndZF);
                 case Mode.RightToLeft:
-                    return Calc.ClampedMap(position.X, Right, Left, ZoomFactorStart, ZoomFactorEnd);
+                    return Calc.ClampedMap(position.X, Right, Left, StartZF, EndZF);
                 default:
-                    return ZoomFactorStart;
+                    return StartZF;
             }
         }
 

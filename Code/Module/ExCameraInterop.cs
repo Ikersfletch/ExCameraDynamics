@@ -59,6 +59,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
         public static Entity Get_CameraReferenceFrame(Level level, string easyKey) => CameraReferenceFrame.GetFromEasyKey(level, easyKey);
         /// <summary> Zooms to a <see cref="CameraReferenceFrame"/> over duration. </summary>
         public static IEnumerator Level_ZoomToCameraReferenceFrame(Level level, Entity cameraReferenceFrame, float duration) => CameraZoomHooks.ZoomToFocus(level, cameraReferenceFrame as ICameraFocusSource, duration);
+        public static IEnumerator Level_ZoomToCameraFocus(Level level, object cameraFocus, float duration) => CameraZoomHooks.ZoomToFocus(level,(CameraFocusWrapper)((CameraFocus)cameraFocus), duration);
+        public static void Level_ForceZoomToCameraFocus(Level level, object cameraFocus) => CameraZoomHooks.ForceCameraTo(level, (CameraFocus)cameraFocus);
 
         /// <returns> The zoom evaluated from <see cref="CameraZoomTrigger"/>s at <paramref name="worldPoint"/> </returns>
         public static float Level_GetTriggerZoomAt(Level level, Vector2 worldPoint) => CalcPlus.GetTriggerZoomAtPosition(level, worldPoint);
@@ -88,6 +90,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
 
         /// <summary> Multiplies the camera's interpolation by a fixed amount. </summary>
         public static void SetSnappingSpeed(float speed) => CameraZoomHooks.SetSnappingSpeed(speed);
+
+        public static object Create_CameraFocus_FromActiveCameraPos(Level level) => new CameraFocus() { Position = level.Camera.Position, Zoom = level.Zoom };
+        public static object Create_CameraFocus(Vector2 world_center, float zoom_factor) => CameraFocus.FromCenter(world_center, zoom_factor);
+        public static object CameraFocus_Lerp(object focus_a, object focus_b, float t) => ((CameraFocus)focus_a).Lerp((CameraFocus)focus_b, t);
 
 
         // Used by Dependency2. 
