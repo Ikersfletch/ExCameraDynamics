@@ -182,8 +182,8 @@ namespace ExtendedCameraDynamics.Code.Backdrops
                     flip |= SpriteEffects.FlipVertically;
                 }
 
-                int clipWidth = (int)Math.Ceiling((LoopX ? (CameraZoomHooks.GetCameraWidth(level) - relativePosition.X) : effectiveTextureWidth) / BaseScale);
-                int clipHeight = (int)Math.Ceiling((LoopY ? (CameraZoomHooks.GetCameraHeight(level) - relativePosition.Y) : effectiveTextureHeight) / BaseScale);
+                int clipWidth = (int)Math.Ceiling((LoopX ? (CameraZoomHooks.GetCameraWidth(level) + 1 - relativePosition.X) : effectiveTextureWidth) / BaseScale);
+                int clipHeight = (int)Math.Ceiling((LoopY ? (CameraZoomHooks.GetCameraHeight(level) + 1 - relativePosition.Y) : effectiveTextureHeight) / BaseScale);
                 Rectangle clipRect = new Rectangle(FlipX ? (-clipWidth) : 0, FlipY ? (-clipHeight) : 0, clipWidth, clipHeight);
                 float scaleFix = Texture.ScaleFix;
                 Draw.SpriteBatch.Draw(Texture.Texture.Texture_Safe, relativePosition, clipRect, color, 0f, (-Texture.DrawOffset / scaleFix), renderScale * scaleFix, flip, 0f);
@@ -279,9 +279,9 @@ namespace ExtendedCameraDynamics.Code.Backdrops
                 flip = SpriteEffects.FlipVertically;
             }
 
-            for (float x = relativePosition.X; x < CameraZoomHooks.GetVisibleCameraWidth(); x += effectiveTextureWidth)
+            for (float x = relativePosition.X; x < CameraZoomHooks.GetVisibleCameraWidth() + 1; x += effectiveTextureWidth)
             {
-                for (float y = relativePosition.Y; y < CameraZoomHooks.GetVisibleCameraHeight(); y += effectiveTextureHeight)
+                for (float y = relativePosition.Y; y < CameraZoomHooks.GetVisibleCameraHeight() + 1; y += effectiveTextureHeight)
                 {
                     //Texture.Draw()
                     float scaleFix = Texture.ScaleFix;
