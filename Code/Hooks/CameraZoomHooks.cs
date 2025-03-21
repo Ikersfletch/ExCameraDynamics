@@ -816,5 +816,17 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             return (position - self.Position);// / ((Engine.Scene as Level)?.Zoom ?? 1f);
         }
+
+        private static Vector2 _spotlight_wipe_correct(Vector2 focusPoint, Scene scene)
+        {
+            return focusPoint * ((scene as Level)?.Zoom ?? 1f);
+        }
+        private static void SpotlightWipe_Render(MonoMod.Cil.ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            cursor.GotoNext(next => next.MatchStloc(1));
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.EmitDelegate<Func<Vector2, Scene, Vector2>>(_spotlight_wipe_correct);
+        }
     }
 }

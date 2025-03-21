@@ -63,7 +63,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
         public static void Level_ForceZoomToCameraFocus(Level level, object cameraFocus) => CameraZoomHooks.ForceCameraTo(level, (CameraFocus)cameraFocus);
 
         /// <returns> The zoom evaluated from <see cref="CameraZoomTrigger"/>s at <paramref name="worldPoint"/> </returns>
-        public static float Level_GetTriggerZoomAt(Level level, Vector2 worldPoint) => CalcPlus.GetTriggerZoomAtPosition(level, worldPoint);
+        public static float Level_GetTriggerZoomAt(Level level, Vector2 worldPoint) => CameraFocus.FromZoomEvalAtPoint(level, worldPoint).Zoom;
         /// <summary>
         /// The game will try to keep all <see cref="CameraFocusTarget"/>s on screen. <br></br>
         /// For reference, the player has a weight of 1. <br></br>

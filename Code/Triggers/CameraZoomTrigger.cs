@@ -45,6 +45,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
 
         public Boundary ZoomBoundary = Boundary.SetsNearest;
 
+        private bool _inactive = true;
+
         public CameraZoomTrigger(EntityData data, Vector2 offset) : base(data, offset)
         {
             Depth = (int)(-data.Position.X -data.Position.Y);
@@ -55,6 +57,11 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
             DeleteFlag = data.Attr("deleteFlag", "");
         }
 
+        public override void Awake(Scene scene)
+        {
+            base.Awake(scene);
+            _inactive = false;
+        }
         public override void OnStay(Player player)
         {
             base.OnStay(player);
@@ -123,7 +130,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
 
         public bool IsActive(Level level)
         {
-            return Active && (string.IsNullOrEmpty(DeleteFlag) || !level.Session.GetFlag(DeleteFlag));
+            return (Active || _inactive) && (string.IsNullOrEmpty(DeleteFlag) || !level.Session.GetFlag(DeleteFlag));
+
         }
     }
 }

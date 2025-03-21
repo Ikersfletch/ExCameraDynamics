@@ -89,7 +89,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Components
         /// <returns></returns>
         public static CameraFocus GetOffsetFocus(Level level, Vector2 playerPosition, ZoomBounds bounds)
         {
-            if (level == null) return new CameraFocus(playerPosition, bounds.Nearest);
+            if (level == null) return new CameraFocus(playerPosition - new Vector2(160f, 90f) / bounds.Nearest, bounds.Nearest);
             CameraFocus baseTarget = GetFocusTarget(level, playerPosition, GetWeightedAverage(level, playerPosition), bounds);
             //if (baseTarget.Zoom >= 1f) return new CameraFocus(baseTarget.Focus - new Vector2(160f, 90f), 1f);
             return new CameraFocus(baseTarget.Position - new Vector2(160f, 90f) / baseTarget.Zoom, baseTarget.Zoom);

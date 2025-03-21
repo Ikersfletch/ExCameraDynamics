@@ -192,7 +192,7 @@ namespace Celeste.Mod.ExCameraDynamics
             {
                 foreach (CameraZoomTrigger trigger in level.Tracker.Entities[typeof(CameraZoomTrigger)])
                 {
-                    if (!trigger.IsActive(level) || !trigger.CollideCheck(player)) continue;
+                    if (!trigger.IsActive(level) || !player.CollideCheck(trigger)) continue;
                     if (trigger.ZoomBoundary == CameraZoomTrigger.Boundary.SetsNearest)
                     {
                         if (zoomNearestFactor > 0) continue;
@@ -227,27 +227,6 @@ namespace Celeste.Mod.ExCameraDynamics
                     continue;
                 }
                 nearest_so_far = Math.Min(nearest_so_far, Math.Min(trigger.EndZF, trigger.StartZF));
-            }
-            return nearest_so_far;
-        }
-
-        public static float GetTriggerZoomAtPosition(Level level, Vector2 position)
-        {
-            if (CameraZoomHooks.TriggerZoomOverride > 0f)
-            {
-                return CameraZoomHooks.TriggerZoomOverride;
-            }
-
-            float nearest_so_far = CameraZoomHooks.RestingZoomFactor;
-            foreach (CameraZoomTrigger trigger in level.Tracker.Entities[typeof(CameraZoomTrigger)])
-            {
-                if (!trigger.IsActive(level) || !trigger.CollidePoint(position)) continue;
-                if (trigger.ZoomMode == CameraZoomTrigger.Mode.Start)
-                {
-                    nearest_so_far = Math.Min(nearest_so_far, trigger.StartZF);
-                    continue;
-                }
-                nearest_so_far = trigger.GetZoom(position);
             }
             return nearest_so_far;
         }

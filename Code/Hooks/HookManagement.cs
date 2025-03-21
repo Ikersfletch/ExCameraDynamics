@@ -1,4 +1,7 @@
-﻿using MonoMod.RuntimeDetour;
+﻿using MonoMod.Cil;
+using MonoMod.RuntimeDetour;
+using System;
+using System.Numerics;
 using System.Reflection;
 
 namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
@@ -60,7 +63,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             hooks_enabled = true;
             IL_Player_get_CameraTarget = new ILHook(typeof(Player).GetProperty("CameraTarget", BindingFlags.Instance | BindingFlags.Public).GetAccessors(false)[0], PlayerCameraTarget);
             IL_Player_orig_Update = new ILHook(typeof(Player).GetMethod("orig_Update", BindingFlags.Instance | BindingFlags.Public), PlayerCameraInterpolation);
-            IL_Level_orig_LoadLevel = new ILHook(typeof(Level).GetMethod("orig_LoadLevel"), Level_LoadLevel_orig);
+            IL_Level_orig_LoadLevel = new ILHook(typeof(Level).GetMethod("orig_LoadLevel", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public), Level_LoadLevel_orig);
             IL_TalkComponentUI_Render = new ILHook(typeof(TalkComponent.TalkComponentUI).GetMethod("Render"), CorrectTalkUI);
             IL_Parallax_orig_Render = new ILHook(typeof(Parallax).GetMethod("orig_Render"), Parallax_orig_Render);
             //IL_AscendManager_Streaks_ctor = new ILHook(typeof(AscendManager.Streaks).GetConstructor(BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(AscendManager) }, null), AscendManager_Streaks_ctor);
@@ -168,6 +171,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             IL.Celeste.MemorialText.Render += MemorialText_Render;
             IL.Celeste.FancyText.Parse += FancyText_Parse;
             On.Monocle.Camera.CameraToScreen += Camera_CameraToScreen;
+            IL.Celeste.SpotlightWipe.Render += SpotlightWipe_Render;
             //IL.Celeste.BackdropRenderer.Render += BackdropRenderer_Render;
             hooks_enabled = true;
         }
@@ -283,6 +287,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             IL.Celeste.MemorialText.Render -= MemorialText_Render;
             IL.Celeste.FancyText.Parse -= FancyText_Parse;
             On.Monocle.Camera.CameraToScreen -= Camera_CameraToScreen;
+            IL.Celeste.SpotlightWipe.Render -= SpotlightWipe_Render;
             //IL.Celeste.BackdropRenderer.Render -= BackdropRenderer_Render;
             hooks_enabled = false;
         }
