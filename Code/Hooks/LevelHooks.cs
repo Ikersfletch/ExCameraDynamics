@@ -107,8 +107,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             }
 
 
-            self.Camera.Viewport.Width = (int)(320f / self.Zoom);
-            self.Camera.Viewport.Height = (int)(180f / self.Zoom);
+            self.Camera.Viewport.Width = (int)MathF.Ceiling(320f / self.Zoom);
+            self.Camera.Viewport.Height = (int)MathF.Ceiling(180f / self.Zoom);
             self.ZoomFocusPoint = new Vector2(160f, 90f) / self.Zoom;
 
             _camera_floating_decimal = self.Camera.Position - self.Camera.Position.Floor();
