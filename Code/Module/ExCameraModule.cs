@@ -49,6 +49,8 @@ namespace Celeste.Mod.ExCameraDynamics
 
         private void Level_LoadLevel(On.Celeste.Level.orig_LoadLevel orig, Level level, Player.IntroTypes playerIntro, bool isFromLoader)
         {
+            // This needs to be called before `Everest.Events.Level.OnLoadLevel`
+            // Hence, hooking the method instead of using the event :(
             if (isFromLoader)
             {
                 try
@@ -69,9 +71,11 @@ namespace Celeste.Mod.ExCameraDynamics
 
             if (isFromLoader && CameraZoomHooks.HooksEnabled)
             {
-
-                level.ForceCameraTo(CameraFocus.FullZoomEvalLoading(level.Tracker.GetEntity<Player>(), level));
-                CameraZoomHooks.AutomaticZooming = true;
+                if (level.Tracker.GetEntity<Player>() is Player p)
+                {
+                    level.ForceCameraTo(CameraFocus.FullZoomEvalLoading(p, level));
+                    CameraZoomHooks.AutomaticZooming = true;
+                }
             }
         }
 
@@ -79,7 +83,6 @@ namespace Celeste.Mod.ExCameraDynamics
         {
             CameraZoomHooks.Unhook();
             On.Celeste.Level.LoadLevel -= Level_LoadLevel;
-            //Everest.Events.Level.OnLoadLevel -= Level_OnLoadLevel;
             Everest.Events.Level.OnExit -= Level_OnExit;
         }
     }

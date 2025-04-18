@@ -148,6 +148,8 @@ namespace Celeste.Mod.ExCameraDynamics
         /// <returns>value.X => minimum zoom factor<br></br>value.Y => maximum zoom factor</returns>
         public static ZoomBounds GetCameraZoomBounds(this Player player, Level level, bool usePlayerHashSet = false)
         {
+            if (level.Transitioning) return new ZoomBounds(level?.Zoom ?? CameraZoomHooks.RestingZoomFactor);
+
             if (!player.InControl || (level?.InCutscene ?? true)) return new ZoomBounds(level?.Zoom ?? CameraZoomHooks.RestingZoomFactor);
 
             return GetCameraZoomUnsafe(player, level, usePlayerHashSet);
