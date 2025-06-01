@@ -1,8 +1,6 @@
-using Celeste.Mod.ExCameraDynamics.Code.Components;
 using Celeste.Mod.ExCameraDynamics.Code.Entities;
 using Celeste.Mod.ExCameraDynamics.Code.Hooks;
 using Celeste.Mod.ExCameraDynamics.Code.Module;
-using Microsoft.Xna.Framework;
 using MonoMod.ModInterop;
 namespace Celeste.Mod.ExCameraDynamics
 {
