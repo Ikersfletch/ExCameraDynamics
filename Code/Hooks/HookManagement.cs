@@ -1,7 +1,5 @@
-﻿using MonoMod.Cil;
+﻿using Celeste.Mod.ExCameraDynamics.Code.Module;
 using MonoMod.RuntimeDetour;
-using System;
-using System.Numerics;
 using System.Reflection;
 
 namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
@@ -60,6 +58,9 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         // Actually hooks the methods. This one is private for a reason.
         private static void CreateHooks()
         {
+            if (ExCameraRemoveTouhoesZoomoutPrivileges.TouhoeCheck()) {
+                return;
+            }
             hooks_enabled = true;
             IL_Player_get_CameraTarget = new ILHook(typeof(Player).GetProperty("CameraTarget", BindingFlags.Instance | BindingFlags.Public).GetAccessors(false)[0], PlayerCameraTarget);
             IL_Player_orig_Update = new ILHook(typeof(Player).GetMethod("orig_Update", BindingFlags.Instance | BindingFlags.Public), PlayerCameraInterpolation);

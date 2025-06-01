@@ -1,4 +1,5 @@
-﻿using Celeste.Mod.ExCameraDynamics.Code.Entities;
+﻿using Celeste.Mod.Entities;
+using Celeste.Mod.ExCameraDynamics.Code.Entities;
 using ExtendedCameraDynamics.Code.Module;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
@@ -602,6 +603,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         }
         private static void Lookout_LookRoutine(ILContext il)
         {
+            //Lookout
+
             ILCursor cursor = new ILCursor(il);
 
             cursor.ReplaceNextFloat(160f,
@@ -705,7 +708,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             ILCursor cursor = new ILCursor(il);
             cursor.ReplaceNextFloat(6f, () => 6f * CurrentLevelZoom());
             cursor.ReplaceNextFloat(6f, () => 6f * CurrentLevelZoom());
-            cursor.ReplaceNextFloat(350f, () => 350f * CurrentLevelZoom());
+            //cursor.ReplaceNextFloat(350f, () => 350f * CurrentLevelZoom());
         }
 
         // Add 'focus_camera' dialog keyword:

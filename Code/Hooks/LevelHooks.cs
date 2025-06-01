@@ -76,9 +76,12 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 
 
         private static Vector2 _camera_floating_decimal = new Vector2(0f,0f);
+        public static Vector2 CameraFloatingDecimal => _camera_floating_decimal;
         // Check to see if the buffers need to be resized.
         private static void Level_BeforeRender(On.Celeste.Level.orig_BeforeRender orig, Level self)
         {
+            //LevelLoader
+
             float trigger_nearest_zoom = self.Tracker.GetEntity<Player>()?.GetNearestZoomPossible(self) ?? 1f;
             if (ShouldResize(trigger_nearest_zoom, self))
             {
@@ -156,7 +159,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         }
         private static void Level_ResetZoom(On.Celeste.Level.orig_ResetZoom orig, Level self)
         {
-            self.ForceCameraTo(CameraFocus.FullZoomEval(self));
+            self.Zoom = CameraFocus.FullZoomEval(self).Zoom;
             AutomaticZooming = true;
         }
 
@@ -353,6 +356,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 
             return (padding + adjusted_position) * 6f;
         }
+
 
     }
 }

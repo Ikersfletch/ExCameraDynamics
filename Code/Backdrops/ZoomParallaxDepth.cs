@@ -135,7 +135,6 @@ namespace ExtendedCameraDynamics.Code.Backdrops
             {
                 alpha *= FadeZ.Value(level.Zoom);
             }
-            
 
             Color color = Color;
             if (alpha < 1f)
@@ -152,6 +151,8 @@ namespace ExtendedCameraDynamics.Code.Backdrops
 
                 float effectiveTextureWidth = Texture.Width * renderScale;
                 float effectiveTextureHeight = Texture.Height * renderScale;
+
+                CameraPositionIfZoomWas1f = (level.Camera.Position + CameraZoomHooks.CameraFloatingDecimal + this.CameraOffset + zoomOffset);
 
                 Vector2 relativePosition = Vector2.Lerp(
                     CameraZoomHooks.GetCameraDimensions(level) * 0.5f,
@@ -214,6 +215,7 @@ namespace ExtendedCameraDynamics.Code.Backdrops
                 alpha *= FadeZ.Value(level.Zoom);
             }
 
+
             Color color = Color;
             if (alpha < 1f)
             {
@@ -231,6 +233,8 @@ namespace ExtendedCameraDynamics.Code.Backdrops
 
             float effectiveTextureWidth = Texture.Width * renderScale;
             float effectiveTextureHeight = Texture.Height * renderScale;
+
+            CameraPositionIfZoomWas1f = (level.Camera.Position + CameraZoomHooks.CameraFloatingDecimal + this.CameraOffset + zoomOffset);
 
             Vector2 relativePosition = Vector2.Lerp(
                 CameraZoomHooks.GetCameraDimensions(level) * 0.5f,

@@ -160,6 +160,9 @@ namespace ExtendedCameraDynamics.Code.Backdrops
                 float effectiveTextureWidth = Texture.Width * renderScale;
                 float effectiveTextureHeight = Texture.Height * renderScale;
 
+
+                CameraPositionIfZoomWas1f = (level.Camera.Position + CameraZoomHooks.CameraFloatingDecimal + this.CameraOffset + zoomOffset);
+
                 Vector2 relativePosition = (Position - CameraPositionIfZoomWas1f * Scroll + zoomOffset).Floor();
 
                 /*

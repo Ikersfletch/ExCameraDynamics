@@ -22,6 +22,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         }
         private static void Parallax_Render(ILContext il)
         {
+            //Parallax
+
             ILCursor cursor = new ILCursor(il);
             MethodInfo Vector2_op_Addition = typeof(Vector2).GetMethod("op_Addition");
 
