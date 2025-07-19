@@ -19,6 +19,11 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             level.Camera.Viewport.Width = (int)(320f / focus.Zoom);
             level.Camera.Viewport.Height = (int)(180f / focus.Zoom);
             level.Camera.Position = focus.Position;
+
+            if (level.Zoom < current_buffer_zoom)
+            {
+                ResizeVanillaBuffers(level.Zoom);
+            }
         }
         public static IEnumerator ZoomToFocus(this Level level, ICameraFocusSource source, float duration)
         {
@@ -77,12 +82,31 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 
         private static Vector2 _camera_floating_decimal = new Vector2(0f,0f);
         public static Vector2 CameraFloatingDecimal => _camera_floating_decimal;
+        public static Vector2 GetParallaxCameraDecimal(Level level)
+        {
+            
+            if (level.Zoom <= 1.0f && level.Zoom == ZoomTarget)
+            {
+                return Vector2.Zero;
+            }
+            return -_camera_floating_decimal * 0.5f;
+
+            return (-_camera_floating_decimal + Vector2.One * 0.5f) * 0.8f;
+        }
         // Check to see if the buffers need to be resized.
         private static void Level_BeforeRender(On.Celeste.Level.orig_BeforeRender orig, Level self)
         {
             //LevelLoader
 
-            float trigger_nearest_zoom = self.Tracker.GetEntity<Player>()?.GetNearestZoomPossible(self) ?? 1f;
+            float trigger_nearest_zoom;
+            if (AutomaticZooming)
+            {
+                trigger_nearest_zoom = self.Tracker.GetEntity<Player>()?.GetNearestZoomPossible(self) ?? RestingZoomFactor;
+            } else
+            {
+                trigger_nearest_zoom = self.Zoom;
+            }
+
             if (ShouldResize(trigger_nearest_zoom, self))
             {
                 // Modify buffers to match zoom
@@ -166,7 +190,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         private static float _level_render_override_zoom_target(Level level, float discarded_zoom_target) => level.Zoom;
         private static Vector2 _level_render_smooth_camera_motion(Vector2 renderPos, Level level)
         {
-            if (level.Zoom <= 1f) return renderPos;
+            if (level.Zoom <= 1f && level.Zoom == ZoomTarget) return renderPos;
+
 
             float factor = (level.Zoom * ((320f - level.ScreenPadding * 2f) / 320f));
             renderPos.X -= _camera_floating_decimal.X * factor;
@@ -205,9 +230,9 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             cursor.PopNext();
             cursor.PopNext();
             cursor.Emit(OpCodes.Ldarg_0);
-            cursor.EmitDelegate<Func<Level, float>>(level => GetCameraWidth(level) + 2);
+            cursor.EmitDelegate<Func<Level, float>>(level => GetCameraWidth(level) + 2f);
             cursor.Emit(OpCodes.Ldarg_0);
-            cursor.EmitDelegate<Func<Level, float>>(level => GetCameraHeight(level) + 2);
+            cursor.EmitDelegate<Func<Level, float>>(level => GetCameraHeight(level) + 2f);
 
 
             cursor.GotoNext(next => next.MatchLdcR4(320f));

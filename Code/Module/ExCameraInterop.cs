@@ -95,6 +95,32 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
         public static object Create_CameraFocus(Vector2 world_center, float zoom_factor) => CameraFocus.FromCenter(world_center, zoom_factor);
         public static object CameraFocus_Lerp(object focus_a, object focus_b, float t) => ((CameraFocus)focus_a).Lerp((CameraFocus)focus_b, t);
 
+        // A hook to modify / add sprites to the custom lookouts added.
+        // Called by both.
+        // > the Sprite is the lookout's sprite
+        // > the Player is the player (duh)
+        // >> return the anim prefix the lookout should use, null if it shouldn't use one.
+        // # This shouldn't be needed with most skin mods, but for more advanced stuff this should be helpful! :)
+
+        public static Dictionary<string, Func<Sprite, Player, string, string>> CustomLookoutHooks = new Dictionary<string, Func<Sprite, Player, string, string>>();
+        public static void HookCustomLookoutSprite(string id, Func<Sprite, Player, string, string> externalHook)
+        {
+            CustomLookoutHooks.Add(id, externalHook);
+        }
+        public static void UnhookCustomLookoutSprite(string id)
+        {
+            CustomLookoutHooks.Remove(id);
+        }
+
+        internal static string RunCustomLookout(Sprite lookoutSprite, Player player, string prefix)
+        {
+            foreach (string id in CustomLookoutHooks.Keys)
+            {
+                var hook = CustomLookoutHooks[id];
+                prefix = hook.Invoke(lookoutSprite, player, prefix);
+            }
+            return prefix;
+        }
 
         // Used by Dependency2. 
         // I am not explaining why this exists.

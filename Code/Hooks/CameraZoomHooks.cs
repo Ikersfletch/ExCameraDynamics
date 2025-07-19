@@ -1,5 +1,4 @@
-﻿using Celeste.Mod.Entities;
-using Celeste.Mod.ExCameraDynamics.Code.Entities;
+﻿using Celeste.Mod.ExCameraDynamics.Code.Entities;
 using ExtendedCameraDynamics.Code.Module;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
@@ -10,7 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
-using System.Text;
 
 namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 {
@@ -92,11 +90,12 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             return
                 (
-                    /*(pass_auto || AutomaticZooming) && */ current_buffer_zoom != trigger_nearest_zoom && ( // the buffer could be resized...
-                        (current_buffer_zoom > trigger_nearest_zoom && self.Zoom < current_buffer_zoom) || // we need to enlarge the buffer for what the zoom could be within this trigger...
+                    /*(pass_auto || AutomaticZooming) && */ (current_buffer_zoom != trigger_nearest_zoom) && ( // the buffer could be resized...
+                        (current_buffer_zoom >= trigger_nearest_zoom && self.Zoom < current_buffer_zoom) || // we need to enlarge the buffer for what the zoom could be within this trigger...
                         (self.Zoom >= trigger_nearest_zoom && self.Zoom >= current_buffer_zoom)  // OR we're more zoomed in than we could possibly need to be and the buffer's larger than the screen
+                        
                     )
-                );
+                ) || (self.Zoom <= current_buffer_zoom && !AutomaticZooming);
         }
         /// <summary>
         /// Determines the bounds the camera can pan towards
@@ -226,7 +225,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             int height = (width * 9) / 16;
             return ClampedToLevel(result, width, height, level);
         }
-        private static Vector2 _fix_anchor_offset(Vector2 anchor, Level level) => anchor + new Vector2(160f, 90f) * (1f - 1f / (level?.Zoom ?? 1f));
+        private static Vector2 _fix_anchor_offset(Vector2 anchor, Level level) => anchor + new Vector2(160f, 90f) * (/*1f*/ - 1f / (level?.Zoom ?? 1f));
         public static void PlayerCameraTarget(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
@@ -306,25 +305,43 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
                 float zoomDif = (1f / level.Zoom) - (1f / ZoomTarget);
                 float widthDifference = 320f * Math.Abs(zoomDif);
 
-                if (widthDifference < 2.0f)
+                Vector2 true_camera_target;
+
+                if (widthDifference < 0.05f)
                 {
-                    cameraPosition += new Vector2(160f, 90f) * zoomDif;
+                    //cameraPosition += new Vector2(160f, 90f) * zoomDif;
                     level.Zoom = level.ZoomTarget = ZoomTarget;
-                    level.Camera.Viewport.Width = (int)Math.Ceiling(320f / level.Zoom);
-                    level.Camera.Viewport.Height = (level.Camera.Viewport.Width * 9) >> 4;
-                    level.ZoomFocusPoint = (new Vector2(160f, 90f) / level.Zoom).Floor();
-                    return cameraPosition + (player.CameraTarget - cameraPosition) * t;
+                    true_camera_target = player.CameraTarget;
+                    //level.Camera.Viewport.Width = (int)Math.Ceiling(320f / level.Zoom);
+                    //level.Camera.Viewport.Height = (level.Camera.Viewport.Width * 9) >> 4;
+                    //level.ZoomFocusPoint = (new Vector2(160f, 90f) / level.Zoom).Ceiling();
+                    //return cameraPosition + (player.CameraTarget - cameraPosition) * t;
+                }
+                else if (widthDifference < 0.5f)
+                {
+                    float origZoom = level.Zoom;
+                    float zoomTarget = ZoomTarget;
+
+                    // find the true target, accounting for the final zoom
+                    level.Zoom = zoomTarget;
+                    true_camera_target = player.CameraTarget;
+
+                    // see TransitionRoutine.cs for the derivation of this.
+                    level.Zoom = (origZoom * zoomTarget) / (zoomTarget + Math.Min(1f, t * 5f) * (origZoom - zoomTarget));
+                }
+                else
+                {
+                    float origZoom = level.Zoom;
+                    float zoomTarget = ZoomTarget;
+
+                    // find the true target, accounting for the final zoom
+                    level.Zoom = zoomTarget;
+                    true_camera_target = player.CameraTarget;
+
+                    // see TransitionRoutine.cs for the derivation of this.
+                    level.Zoom = (origZoom * zoomTarget) / (zoomTarget + t * (origZoom - zoomTarget));
                 }
 
-                float origZoom = level.Zoom;
-                float zoomTarget = ZoomTarget;
-
-                // find the true target, accounting for the final zoom
-                level.Zoom = zoomTarget;
-                Vector2 true_camera_target = player.CameraTarget;
-
-                // see TransitionRoutine.cs for the derivation of this.
-                level.Zoom = (origZoom * zoomTarget) / (zoomTarget + t * (origZoom - zoomTarget));
 
                 // adjust the camera to the zoom...
                 level.Camera.Viewport.Width = (int)Math.Ceiling(320f / level.Zoom);
@@ -830,6 +847,26 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             cursor.GotoNext(next => next.MatchStloc(1));
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate<Func<Vector2, Scene, Vector2>>(_spotlight_wipe_correct);
+        }
+
+        private static void SummitGem_BgFlash_Render(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            cursor.ReplaceNextFloat(340f, () => GetBufferWidth() + 20f);
+            cursor.ReplaceNextFloat(200f, () => GetBufferHeight() + 20f);
+        }
+
+
+        private static void CameraTargetTrigger_Ctor(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            // Removes the 160,90 offset from all camera anchors
+
+            cursor.GotoNext(next => next.MatchNewobj<Vector2>());
+            cursor.PopNext();
+            cursor.PopNext();
+            cursor.Remove();
+            cursor.Remove();
         }
     }
 }

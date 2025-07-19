@@ -3,7 +3,6 @@ using Celeste.Mod.ExCameraDynamics.Code.Hooks;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
-using System.Collections.Generic;
 
 
 namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
@@ -55,6 +54,16 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
             StartZF = data.Float("zoomStart", 1f);
             ZoomBoundary = data.Bool("isMax", true) ? Boundary.SetsNearest : Boundary.SetsFurthest;
             DeleteFlag = data.Attr("deleteFlag", "");
+        }
+
+        public CameraZoomTrigger(Vector2 position, int width, int height, float start_zf, float end_zf, Boundary boundary = Boundary.SetsNearest, Mode zoom_mode = Mode.Start, string delete_flag = "") : base(new EntityData() { Width = width, Height = height, Position = position}, Vector2.Zero)
+        {
+            Depth = (int)(-position.X - position.Y);
+            EndZF = end_zf;
+            StartZF = start_zf;
+            ZoomBoundary = boundary;
+            DeleteFlag = delete_flag;
+            ZoomMode = zoom_mode;
         }
 
         public override void Awake(Scene scene)

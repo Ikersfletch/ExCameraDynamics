@@ -61,7 +61,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             if (target == null) return;
 
-            if (target.Width == BufferHeightOverride && target.Height == BufferWidthOverride) return; // don't resize what doesn't need to be resized.
+            if (target.Width == BufferWidthOverride && target.Height == BufferHeightOverride) return; // don't resize what doesn't need to be resized.
 
             target.Width = BufferWidthOverride;
             target.Height = BufferHeightOverride;

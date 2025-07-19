@@ -49,6 +49,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             cursor.Emit(OpCodes.Stloc_1); // store the ZoomOffset for later
             cursor.Emit(OpCodes.Ldloc_1);
             cursor.Emit(OpCodes.Call, Vector2_op_Addition);
+            cursor.Emit(OpCodes.Ldarg_1); // ldarg1 = scene
+            cursor.Emit(OpCodes.Isinst, typeof(Level));
+            cursor.EmitDelegate<Func<Level, Vector2>>(GetParallaxCameraDecimal);
+            cursor.Emit(OpCodes.Call, Vector2_op_Addition);
 
             // here's the actual 'position' of the parallax. because the 'camera offset' was altered, we need to account for that here.
             // luckily we add the same value again.
@@ -96,6 +100,13 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             cursor.Emit(OpCodes.Stloc_1);
             cursor.Emit(OpCodes.Ldloc_1);
             cursor.Emit(OpCodes.Call, Vector2_op_Addition);
+            cursor.Emit(OpCodes.Ldarg_1); // ldarg1 = scene
+            cursor.Emit(OpCodes.Isinst, typeof(Level));
+            cursor.EmitDelegate<Func<Level, Vector2>>(GetParallaxCameraDecimal);
+            cursor.Emit(OpCodes.Call, Vector2_op_Addition);
+
+
+
             cursor.GotoNext(next => next.MatchStloc(1));
             cursor.Index--;
             cursor.Emit(OpCodes.Ldloc_1);

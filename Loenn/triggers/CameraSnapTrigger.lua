@@ -1,6 +1,7 @@
 local ZoomTrigger = {}
 
 ZoomTrigger.name = "ExCameraDynamics/CameraSnapTrigger"
+ZoomTrigger.category = "camera"
 ZoomTrigger.fieldOrder = {
     "x", "y", "width", "height", "snapSpeed"
 }

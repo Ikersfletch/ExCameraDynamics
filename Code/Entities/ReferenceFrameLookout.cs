@@ -1,5 +1,6 @@
 ﻿using Celeste.Mod.Entities;
 using Celeste.Mod.ExCameraDynamics.Code.Hooks;
+using Celeste.Mod.ExCameraDynamics.Code.Module;
 using Microsoft.Xna.Framework;
 using Monocle;
 using System;
@@ -104,7 +105,6 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Entities
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Interact(Player player)
         {
             if (player.DefaultSpriteMode == PlayerSpriteMode.MadelineAsBadeline || SaveData.Instance.Assists.PlayAsBadeline)
@@ -124,9 +124,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Entities
             coroutine.RemoveOnComplete = true;
             Add(coroutine);
             interacting = true;
+
+            animPrefix = ExCameraInterop.RunCustomLookout(sprite, player, animPrefix);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public void StopInteracting()
         {
             interacting = false;
@@ -151,7 +152,6 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Entities
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public IEnumerator LookRoutine(Player player)
         {
             Level level = SceneAs<Level>();

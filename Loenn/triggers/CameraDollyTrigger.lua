@@ -1,9 +1,9 @@
 local ZoomTrigger = {}
 
-ZoomTrigger.name = "ExCameraDynamics/CameraSliderZoomTrigger"
+ZoomTrigger.name = "ExCameraDynamics/CameraDollyTrigger"
 ZoomTrigger.category = "camera"
 ZoomTrigger.fieldOrder = {
-    "x", "y", "width", "height", "mode","isMax", "zoomStart", "zoomEnd"
+    "x", "y", "width", "height", "zoomStart", "zoomEnd", "duration","isMax"
 }
 ZoomTrigger.fieldInformation = {
     deleteFlag = {
@@ -16,20 +16,11 @@ ZoomTrigger.fieldInformation = {
 	zoomStart = {
 		fieldType = "string"
 	},
-	mode = {
-		fieldType = "string",
-		editable = false,
-		options = {
-			Start="Start",
-			TopToBottom="TopToBottom",
-			BottomToTop="BottomToTop",
-			LeftToRight="LeftToRight",
-			RightToLeft="RightToLeft"
-		}
-		
-	},
 	isMax = {
 		fieldType = "boolean"
+	},
+	duration = {
+		fieldType = "number"
 	}
 }
 ZoomTrigger.placements = {
@@ -37,7 +28,7 @@ ZoomTrigger.placements = {
     data = {
 		zoomEnd = "1",
 		zoomStart = "1",
-		mode = "Start",
+		duration = 1,
 		isMax = true,
 		deleteFlag = ""
     }

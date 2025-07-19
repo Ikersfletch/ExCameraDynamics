@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Title>Extended Camera Dynamics</Title>
     <Authors>Isla Fletcher</Authors>
     <AssemblyName>ExCameraDynamics</AssemblyName>

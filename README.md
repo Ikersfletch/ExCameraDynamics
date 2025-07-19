@@ -1,4 +1,4 @@
-# Extended Camera Dynamics (v1.0.9)
+# Extended Camera Dynamics (v1.1.0)
 A Celeste mod (by me) that extends camera functionality.
 
 > Most Vanilla entities and backdrops should "just work" with this.
@@ -158,7 +158,12 @@ This helper mod only works with Loenn. I will only make it work with Loenn.
             detail while performing worse.
 	>
 	> - Pixel-perfect for 1080p is `0.16666666...`  == (1/6)
-
+ - ### CameraZoomTrigger - Session Slider (Trigger)
+	You can specify session sliders instead of numerical values in the ZoomStart
+	and ZoomEnd parameters.
+ - ### CameraDollyTrigger (Trigger)
+	Zoom from `ZoomStart` to `ZoomEnd` over `Duration` seconds as long as the
+	player remains in the trigger.
  - ### CameraReferenceFrame (Entity)
 	Specifies a camera position and zoom in the level. Used for a few other 
     things. You can identify them with the "EasyKey" parameter.
@@ -166,6 +171,11 @@ This helper mod only works with Loenn. I will only make it work with Loenn.
 	> ##### *Notes:*
 	> I used this string-based system instead of EntityID as they are 
           designer-named and more human-readable.
+ - ### CameraFrameTargetTrigger (Trigger)
+	Like vanilla's `CameraTargetTrigger`, but it targets a `CameraReferenceFrame`
+	instead of a point.
+	#### EasyKey: `String`
+	> The EasyKey of the CameraReferenceFrame to target while the player is within the trigger.
 
  - ### ReferenceFrameLookout (Entity)
 	A pathed watchtower that uses CameraReferenceFrames as nodes to zoom & move
@@ -178,6 +188,17 @@ This helper mod only works with Loenn. I will only make it work with Loenn.
 	  but also goes right past them. Adjust the frames' positions and zooms until 
 	  you get the motion about where you want.
 	
+ - ### AdjustableLookout (Entity)
+	A non-pathed watchtower that allows the player to zoom in and out.
+	> While in the watchtower, hold/toggle grab and press up/down to zoom in and out.
+	
+	The player will be able to zoom in until `MaxZoom` and zoom out until `MinZoom`.
+	> ##### *Notes:*
+	> I admit that this might not be entirely necessary; however I know that a 
+	  zoomed-out room can make precision difficult to discern.
+	  This could be helpful to let players see both a large view of a room
+	  and smaller things like little decals or pixel alignments. :)
+
  - ### CameraFocusTarget (Component)
 	A component that influences the camera towards its entity with a weight.
 	You can specify the maximum amount (minimum factor) that an area can zoom 

@@ -9,7 +9,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Entities
 {
     public struct CameraFocus
     {
-        public Vector2 Center => Position + new Vector2(160f, 90f) / Zoom;
+        public Vector2 Center { 
+            get => Position + new Vector2(160f, 90f) / Zoom;
+            set => Position = value - new Vector2(160f, 90f) / Zoom;
+        }
         public Vector2 Dimensions => new Vector2(320f, 180f) / Zoom;
         public int Width => (int)Math.Ceiling(320f / Zoom);
         public int Height => (int)Math.Ceiling(180f / Zoom);

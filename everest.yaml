@@ -1,6 +1,6 @@
 ﻿- Name: ExtendedCameraDynamics
-  Version: 1.0.9
-  DLL: bin/Debug/net7.0/ExCameraDynamics.dll
+  Version: 1.1.0
+  DLL: bin/Debug/net8.0/ExCameraDynamics.dll
   Dependencies:
     - Name: Everest
-      Version: 1.4465.0
+      Version: 1.5577.0

@@ -2,18 +2,58 @@ mods.ExCameraDynamics.name=Extended Camera Dynamics
 
 # Camera Reference Frame
 entities.ExCameraDynamics/CameraReferenceFrame.placements.name.default=Camera Reference Frame
-entities.ExCameraDynamics/ReferenceFrameLookout.placements.name.default=Watchtower (Reference Frame)
+entities.ExCameraDynamics/CameraReferenceFrame.placements.description.default=Specifies a camera position & zoom as a reference.
+entities.ExCameraDynamics/CameraReferenceFrame.attributes.description.easyKey=An identifier. Should be unique for its room.
+entities.ExCameraDynamics/CameraReferenceFrame.attributes.description.zoom=The zoom factor.
 
-# Camera Zoom Trigger
-triggers.ExCameraDynamics/CameraZoomTrigger.placements.name.default=Camera Zoom Trigger
-triggers.ExCameraDynamics/CameraSliderZoomTrigger.placements.name.default=Camera Zoom Trigger (Session Slider)
+
+entities.ExCameraDynamics/ReferenceFrameLookout.placements.name.default=Watchtower (Reference Frame)
+entities.ExCameraDynamics/ReferenceFrameLookout.placements.description.default=An on-rails watchtower that uses `CameraReferenceFrame`s instead of nodes.
+entities.ExCameraDynamics/ReferenceFrameLookout.attributes.description.easyKeys=A comma-seperated list of easykeys as nodes in the watchtower's path.
+
+entities.ExCameraDynamics/AdjustableLookout.placements.name.default=Adjustable Watchtower
+
+# Camera Zoom Triggers
+triggers.ExCameraDynamics/CameraZoomTrigger.placements.name.default=Camera Zoom
+triggers.ExCameraDynamics/CameraZoomTrigger.placements.description.default=Specifies zoom factor bounds.
+triggers.ExCameraDynamics/CameraZoomTrigger.attributes.description.isMax=When true, this trigger specifies the upper bound (max zoom-in) of the zoom factor. Else, specifies lower bound (min zoom-in) of zoom factor.
+triggers.ExCameraDynamics/CameraZoomTrigger.attributes.description.deleteFlag=Specifies a deletion flag. If this `deletion flag` is set, then the trigger is disabled.
+triggers.ExCameraDynamics/CameraZoomTrigger.attributes.description.mode=Specifies how the zoom bound is interpolated w.r.t. player position. If set to `Start`, the trigger directly sets `Zoom Start` as the bound. 
+
+
+triggers.ExCameraDynamics/CameraSliderZoomTrigger.placements.name.default=Camera Zoom (Session Slider)
+triggers.ExCameraDynamics/CameraSliderZoomTrigger.placements.description.default=See 'Camera Zoom'; Allows you to specify Session Sliders instead of discrete zoom factors.
+
+triggers.ExCameraDynamics/CameraDollyTrigger.placements.name.default=Camera Dolly
+triggers.ExCameraDynamics/CameraDollyTrigger.placements.description.default=See 'Camera Zoom'; While the player remains in the trigger, it sets the zoom factor bound from `Zoom Start` to `Zoom End` over `Duration` time. Resets when the player leaves.
+triggers.ExCameraDynamics/CameraDollyTrigger.attributes.description.duration=The time (in seconds) the player must spend in the trigger for the bound to go from `Zoom Start` to `Zoom End`.
+triggers.ExCameraDynamics/CameraDollyTrigger.attributes.description.zoomStart=The zoom factor bound when the player first enters the trigger.
+triggers.ExCameraDynamics/CameraDollyTrigger.attributes.description.zoomEnd=The zoom factor bound once the player has lingered for `Duration` seconds.
+
+triggers.ExCameraDynamics/CameraFrameTargetTrigger.placements.name.default=Camera Frame Target
+triggers.ExCameraDynamics/CameraFrameTargetTrigger.placements.description.default=Vanilla's `Camera Target`, but using a `Camera Reference Frame` instead of a node to specify zoom & position.
+triggers.ExCameraDynamics/CameraFrameTargetTrigger.attributes.description.lerpStrength=Determines how fast the camera moves & zooms to lock into place upon activation.
+triggers.ExCameraDynamics/CameraFrameTargetTrigger.attributes.description.yOnly=The camera will only lock on the Y axis.
+triggers.ExCameraDynamics/CameraFrameTargetTrigger.attributes.description.xOnly=The camera will only lock on the X axis.
+triggers.ExCameraDynamics/CameraFrameTargetTrigger.attributes.description.easyKey=The `CameraReferenceFrame` to target.
+triggers.ExCameraDynamics/CameraFrameTargetTrigger.attributes.description.lerpMode=Determines which direction the camera position moves in.
 
 # Camera Snap Trigger
-triggers.ExCameraDynamics/CameraSnapTrigger.placements.name.default=Camera Snap Trigger
-triggers.ExCameraDynamics/CameraSliderSnapTrigger.placements.name.default=Camera Snap Trigger (Session Slider)
+triggers.ExCameraDynamics/CameraSnapTrigger.placements.name.default=Camera Snap
+triggers.ExCameraDynamics/CameraSnapTrigger.placements.description.default=Multiplies the camera's snapping speed for both movement and zooming.
+
+triggers.ExCameraDynamics/CameraSliderSnapTrigger.placements.name.default=Camera Snap (Session Slider)
+triggers.ExCameraDynamics/CameraSliderSnapTrigger.placements.description.default=`Camera Snap`, but allowing to to specify Session Sliders instead of discrete factors.
 
 # Backdrops
 style.effects.ExCameraDynamics/ZoomParallax.name=Zoom Parallax [Extended Camera Dynamics]
+style.effects.ExCameraDynamics/ZoomParallax.description=Scales with zoom factor. Perfect for something like a vignette.
+# style.effects.ExCameraDynamics/ZoomParallax.description.scaleRetention=1.0 -> retains screen-space scale regardless of zoom; 0.0 -> retains world-space scale regardless of zoom. Perfect for something like a vignette.
+
 style.effects.ExCameraDynamics/ZoomParallaxDepth.name=Zoom Parallax (Depth-Based) [Extended Camera Dynamics]
+style.effects.ExCameraDynamics/ZoomParallaxDepth.description=Renders the parallax from a perspective interpretation. The game world is at `z == 0`. The camera is at `z == (-1 / zoom_factor)`
+
 style.effects.ExCameraDynamics/ZoomParticleParallax.name=Zoom Particle Parallax [Extended Camera Dynamics]
+
+
 style.effects.ExCameraDynamics/ZoomParticleDepth.name=Zoom Particle (Depth-Based) [Extended Camera Dynamics]
