@@ -225,7 +225,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             int height = (width * 9) / 16;
             return ClampedToLevel(result, width, height, level);
         }
-        private static Vector2 _fix_anchor_offset(Vector2 anchor, Level level) => anchor + new Vector2(160f, 90f) * (/*1f*/ - 1f / (level?.Zoom ?? 1f));
+        private static Vector2 _fix_anchor_offset(Vector2 anchor, Level level) => anchor + (new Vector2(160f, 90f) * (1f - 1f / (level?.Zoom ?? 1f))).Floor();
         public static void PlayerCameraTarget(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);

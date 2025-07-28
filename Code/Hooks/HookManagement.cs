@@ -177,8 +177,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             IL.Celeste.SpotlightWipe.Render += SpotlightWipe_Render;
             //IL.Celeste.BackdropRenderer.Render += BackdropRenderer_Render;
             IL.Celeste.SummitGem.BgFlash.Render += SummitGem_BgFlash_Render;
-            IL.Celeste.CameraTargetTrigger.ctor += CameraTargetTrigger_Ctor;
-
+            //IL.Celeste.CameraTargetTrigger.ctor += CameraTargetTrigger_Ctor;
             hooks_enabled = true;
         }
 
@@ -296,7 +295,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             IL.Celeste.SpotlightWipe.Render -= SpotlightWipe_Render;
             //IL.Celeste.BackdropRenderer.Render -= BackdropRenderer_Render;
             IL.Celeste.SummitGem.BgFlash.Render -= SummitGem_BgFlash_Render;
-            IL.Celeste.CameraTargetTrigger.ctor -= CameraTargetTrigger_Ctor;
+            //IL.Celeste.CameraTargetTrigger.ctor -= CameraTargetTrigger_Ctor;
             hooks_enabled = false;
         }
     }

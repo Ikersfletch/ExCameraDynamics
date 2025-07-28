@@ -21,7 +21,7 @@ namespace ExtendedCameraDynamics.Code.Triggers
             {
                 if (string.IsNullOrEmpty(DeleteFlag) || !SceneAs<Level>().Session.GetFlag(DeleteFlag) || Focus == null)
                 {
-                    player.CameraAnchor = Focus.CameraFocus.Center;
+                    player.CameraAnchor = (Focus.CameraFocus.Position).Floor();
                     float t = MathHelper.Clamp(LerpStrength * GetPositionLerp(player, PositionMode), 0f, 1f);
                     Zoomer.T = t;
                     player.CameraAnchorLerp = Vector2.One * t;

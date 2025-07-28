@@ -84,12 +84,13 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         public static Vector2 CameraFloatingDecimal => _camera_floating_decimal;
         public static Vector2 GetParallaxCameraDecimal(Level level)
         {
-            
+            //return Vector2.Zero;
+
             if (level.Zoom <= 1.0f && level.Zoom == ZoomTarget)
             {
                 return Vector2.Zero;
             }
-            return -_camera_floating_decimal * 0.5f;
+            return _camera_floating_decimal * 0.5f;
 
             return (-_camera_floating_decimal + Vector2.One * 0.5f) * 0.8f;
         }

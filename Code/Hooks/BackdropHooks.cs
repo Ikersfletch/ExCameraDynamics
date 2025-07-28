@@ -18,7 +18,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         //// PARALLAX
         public static Vector2 GetParallaxZoomOffset()
         {
-            return (new Vector2(-160f, -90f) + (0.5f * VisibleDimensions()));// * (Vector2.One - self.Scroll);
+            return (new Vector2(-160f, -90f) + (0.5f * VisibleDimensions())).Floor();// * (Vector2.One - self.Scroll);
         }
         private static void Parallax_Render(ILContext il)
         {

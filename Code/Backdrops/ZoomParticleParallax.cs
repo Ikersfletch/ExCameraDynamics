@@ -199,7 +199,7 @@ namespace ExtendedCameraDynamics.Code.Backdrops
             Level level = scene as Level;
             Vector2 cameraZoomOffset = CameraZoomHooks.GetParallaxZoomOffset();
             // this is as if level.Zoom == 1f
-            Vector2 cameraPosition = level.Camera.Position + cameraZoomOffset;
+            Vector2 cameraPosition = level.Camera.Position + cameraZoomOffset + CameraZoomHooks.CameraFloatingDecimal;
 
             float alpha = Alpha * fadeIn;
 
