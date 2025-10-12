@@ -1,6 +1,7 @@
 using Celeste.Mod.ExCameraDynamics.Code.Entities;
 using Celeste.Mod.ExCameraDynamics.Code.Hooks;
 using Celeste.Mod.ExCameraDynamics.Code.Module;
+using ExtendedCameraDynamics.Code.Backdrops;
 using MonoMod.ModInterop;
 namespace Celeste.Mod.ExCameraDynamics
 {
@@ -43,6 +44,7 @@ namespace Celeste.Mod.ExCameraDynamics
             On.Celeste.Level.LoadLevel += Level_LoadLevel;
             //Everest.Events.Level.OnLoadLevel += Level_OnLoadLevel;
             Everest.Events.Level.OnExit += Level_OnExit;
+            DecalRegistry.AddPropertyHandler<ZoomDecalDepth>();
         }
 
         private void Level_LoadLevel(On.Celeste.Level.orig_LoadLevel orig, Level level, Player.IntroTypes playerIntro, bool isFromLoader)

@@ -136,9 +136,9 @@ namespace Celeste.Mod.ExCameraDynamics
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public static ZoomBounds GetCameraZoomBounds(this Player player, bool usePlayerHashSet = false)
+        public static ZoomBounds GetCameraZoomBounds(this Player player, bool usePlayerHashSet = false, bool relaxZoom = false)
         {
-            return player.GetCameraZoomBounds(player.SceneAs<Level>(), usePlayerHashSet);
+            return player.GetCameraZoomBounds(player.SceneAs<Level>(), usePlayerHashSet, relaxZoom);
         }
         /// <summary>
         /// 
@@ -146,13 +146,14 @@ namespace Celeste.Mod.ExCameraDynamics
         /// <param name="player"></param>
         /// <param name="level"></param>
         /// <returns>value.X => minimum zoom factor<br></br>value.Y => maximum zoom factor</returns>
-        public static ZoomBounds GetCameraZoomBounds(this Player player, Level level, bool usePlayerHashSet = false)
+        public static ZoomBounds GetCameraZoomBounds(this Player player, Level level, bool usePlayerHashSet = false, bool relaxZoom = false)
         {
             if (level.Transitioning) return new ZoomBounds(level?.Zoom ?? CameraZoomHooks.RestingZoomFactor);
 
-            if (!player.InControl || (level?.InCutscene ?? true)) return new ZoomBounds(level?.Zoom ?? CameraZoomHooks.RestingZoomFactor);
+            if (CameraZoomHooks.AutomaticZooming || relaxZoom) return player?.GetCameraZoomUnsafe(level, usePlayerHashSet) ?? new ZoomBounds(level?.Zoom ?? 1f);
 
-            return GetCameraZoomUnsafe(player, level, usePlayerHashSet);
+            return new ZoomBounds(level?.Zoom ?? CameraZoomHooks.RestingZoomFactor);
+
         }
 
         public static ZoomBounds GetCameraZoomUnsafe(this Player player, Level level, bool usePlayerHashSet = false)

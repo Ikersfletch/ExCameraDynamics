@@ -67,6 +67,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             return GetCameraHeightInt(level);
         }
 
+        internal static bool BoundBufferSize = true;
         public const int MaxBufferWidth = 2560;
         public const int MaxBufferHeight = (MaxBufferWidth * 9) / 16;
         // let's make the camera zoom out.
@@ -724,6 +725,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             ILCursor cursor = new ILCursor(il);
             cursor.ReplaceNextFloat(6f, () => 6f * CurrentLevelZoom());
+            cursor.Index++;
             cursor.ReplaceNextFloat(6f, () => 6f * CurrentLevelZoom());
             //cursor.ReplaceNextFloat(350f, () => 350f * CurrentLevelZoom());
         }

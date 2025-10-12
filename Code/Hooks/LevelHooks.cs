@@ -72,7 +72,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             //float to = ;
             for (float p = 0f; p < 1f; p += Engine.DeltaTime / duration)
             {
-                level.ForceCameraTo(start.Lerp(CameraFocus.FullZoomEval(level), (float)Math.Clamp(Ease.SineInOut(p), 0.0, 1.0)));
+                level.ForceCameraTo(start.Lerp(CameraFocus.FullZoomEval(level, false, true), (float)Math.Clamp(Ease.SineInOut(p), 0.0, 1.0)));
                 yield return null;
             }
 

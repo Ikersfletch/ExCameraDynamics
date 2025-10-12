@@ -1,14 +1,135 @@
 ﻿using Celeste;
+using Celeste.Mod;
 using Celeste.Mod.ExCameraDynamics.Code.Entities;
 using Celeste.Mod.ExCameraDynamics.Code.Hooks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Monocle;
 using System;
 using System.Collections;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace ExtendedCameraDynamics.Code.Module
 {
     public class ExCameraCommands
     {
+        [Command("excam_render_chapter", "Renders every level in this chapter, at native resolution.\n The images are found in <Celeste Directory>/Saves/excam_chapter_renders/...")]
+        public static void ScreenshotBin(bool render_debug = false, bool render_foreground = true, bool render_background = true)
+        {
+
+            Level l = Engine.Scene as Level;
+            Player p = l?.Tracker?.GetEntity<Player>();
+
+            if (p == null)
+            {
+                throw new Exception("Need active player in level");
+            }
+
+            if (!CameraZoomHooks.HooksEnabled)
+            {
+                throw new Exception("Enable hooks to use!!");
+            }
+
+            p.Visible = CameraZoomHooks.AutomaticZooming = false;
+
+            string starting_room = l.Session.Level;
+
+            // Just create this now, it won't change over the loop...
+            string save_folder = Path.Combine(UserIO.SavePath, "excam_chapter_renders", l.Session.MapData.Filename);
+            Directory.CreateDirectory(save_folder);
+
+            // Prepare for rendering
+            GameplayRenderer.RenderDebug = render_debug;
+            Engine.Commands.Open = false;
+            CameraZoomHooks.BoundBufferSize = false;
+
+            // a generic buffer for the color data
+            Color[] clipData = null;
+
+
+            foreach (string levelname in l.Session.MapData.levelsByName.Keys)
+            {
+
+                if (levelname.Equals("end-cinematic"))
+                {
+                    continue;
+                }
+                // skip levels w/out a respawn (these are not accessible to the player)
+                LevelData data = l.Session.MapData.levelsByName[levelname];
+                if (data.Spawns.Count <= 0)
+                {
+                    continue;
+                }
+
+
+                // put camera into position *before* loading entities (for visibility)
+                float zoom = Math.Min(320f / data.Bounds.Width, 180f / data.Bounds.Height);
+                CameraFocus focus = CameraFocus.FromCenter(data.Bounds.Center.ToVector2(), zoom);
+                CameraZoomHooks.ForceCameraTo(l, focus);
+                CameraZoomHooks.TriggerZoomOverride = zoom;
+
+                // move to the level in question
+                l.TeleportTo(p, levelname, Player.IntroTypes.None, null);
+                l.Wipe.Visible = false;
+
+                // TeleportTo messes w/ camera
+                CameraZoomHooks.ForceCameraTo(l, focus);
+                // Make the player invisible
+                l.Tracker.GetEntity<Player>().Visible = false;
+
+                // Render the level
+                l.Update();
+                l.BeforeRender();
+                l.Render();
+                l.AfterRender();
+
+                // Determine what portion of the render buffer is being saved to disk
+                Rectangle clip = new Rectangle(
+                        l.Bounds.X - (int)l.Camera.Position.X,
+                        l.Bounds.Y - (int)l.Camera.Position.Y,
+                        l.Bounds.Width,
+                        l.Bounds.Height
+                    ).ClampTo(
+                        new Rectangle(0, 0, GameplayBuffers.Level.Width, GameplayBuffers.Level.Height)
+                    );
+
+                // Put the data from the render buffer into clipData
+                int count = clip.Width * clip.Height;
+                if ((clipData?.Length ?? 0) < count)
+                {
+                    clipData = new Color[count];
+                }
+                GameplayBuffers.Level.Target.GetData(0, clip, clipData, 0, count);
+
+                // open file for writing
+                string filename = Path.Combine(save_folder, levelname+".png");
+                using Stream stream = File.OpenWrite(filename);
+                GCHandle dataHandler = GCHandle.Alloc(clipData, GCHandleType.Pinned);
+
+                try {
+                    // save to disk
+                    FNA3D.WritePNGStream(stream, clip.Width, clip.Height, clip.Width, clip.Height, dataHandler.AddrOfPinnedObject());
+                }
+                finally
+                {
+                    // clean up after saving
+                    if (dataHandler.IsAllocated)
+                    {
+                        dataHandler.Free();
+                    }
+                }
+            }
+
+            // return to original room, reset camera shenanigans.
+            l.TeleportTo(p, starting_room, Player.IntroTypes.Respawn);
+            l.Wipe.Visible = true;
+            CameraZoomHooks.TriggerZoomOverride = -1f;
+            l.Update();
+            CameraZoomHooks.AutomaticZooming = CameraZoomHooks.BoundBufferSize = true;
+        }
+
+
         [Command("excam_is_active", "lets find out")]
         public static void IAMLOADED()
         {

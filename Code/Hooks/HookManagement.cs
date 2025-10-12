@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod.ExCameraDynamics.Code.Module;
+using ExtendedCameraDynamics.Code.Backdrops;
 using Microsoft.Xna.Framework;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
@@ -60,7 +61,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         // Actually hooks the methods. This one is private for a reason.
         private static void CreateHooks()
         {
-            if (ExCameraRemoveTouhoesZoomoutPrivileges.TouhoeCheck()) {
+            if (ExCameraRemoveLilacIslesZoomoutPrivileges.LilacIsleCheck()) {
                 return;
             }
             hooks_enabled = true;
@@ -178,6 +179,9 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             //IL.Celeste.BackdropRenderer.Render += BackdropRenderer_Render;
             IL.Celeste.SummitGem.BgFlash.Render += SummitGem_BgFlash_Render;
             //IL.Celeste.CameraTargetTrigger.ctor += CameraTargetTrigger_Ctor;
+
+            
+
             hooks_enabled = true;
         }
 
@@ -296,6 +300,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             //IL.Celeste.BackdropRenderer.Render -= BackdropRenderer_Render;
             IL.Celeste.SummitGem.BgFlash.Render -= SummitGem_BgFlash_Render;
             //IL.Celeste.CameraTargetTrigger.ctor -= CameraTargetTrigger_Ctor;
+
+
             hooks_enabled = false;
         }
     }

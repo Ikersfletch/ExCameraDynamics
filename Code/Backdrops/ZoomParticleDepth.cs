@@ -227,7 +227,6 @@ namespace ExtendedCameraDynamics.Code.Backdrops
             {
                 for (int i = 0; i < Particles.Length; i++)
                 {
-                    Vector2 renderPosition = Particles[i].Position + Position - cameraPosition + cameraZoomOffset;
                     float depth = Particles[i].Depth - cameraDepth;
 
                     if (depth <= 0)
@@ -249,7 +248,7 @@ namespace ExtendedCameraDynamics.Code.Backdrops
 
                     float scaleFactor = 1f / (depth * level.Zoom);
 
-                    renderPosition = Vector2.Lerp(cameraMidpoint, renderPosition, scaleFactor);
+                    Vector2 renderPosition = Vector2.Lerp(cameraMidpoint, Particles[i].Position + Position - cameraPosition + cameraZoomOffset, scaleFactor);
 
                     Textures[Particles[i].TextureIndex].DrawCentered(renderPosition, renderColor * partAlpha, Particles[i].Scale * scaleFactor, Particles[i].Angle);
                     //Textures[Particles[i].TextureIndex].DrawCentered(renderPosition, renderColor, Particles[i].Scale, Particles[i].Angle);
