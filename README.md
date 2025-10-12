@@ -1,4 +1,4 @@
-# Extended Camera Dynamics (v1.1.1)
+# Extended Camera Dynamics (v1.1.2)
 A Celeste mod (by me) that extends camera functionality.
 
 > Most Vanilla entities and backdrops should "just work" with this.
@@ -12,10 +12,8 @@ load into a chapter with the correct metadata. This is because it makes a few
 breaking changes to vanilla behavior:
 >	- `Level.ZoomFocusPoint` should be treated as if it doesn't exist, and does
       nothing; it's effectively nulled.
->	- Some Vanilla zooming methods (e.g.: `Level.ZoomAcross()`) are 
-      effectively nulled.
->	- Some backdrops have minor visual discrepancies when compared against 
-      vanilla.
+>	- Some Vanilla zooming methods (e.g.: `Level.ZoomAcross()`) are effectively nulled.
+>	- Some backdrops have minor visual discrepancies when compared against vanilla.
 >
 >It can also induce a memory & performance penalty, as it has to resize 
  buffers (taking up more memory) and duplicate draw calls.
@@ -316,6 +314,40 @@ This helper mod only works with Loenn. I will only make it work with Loenn.
 
 	To let the camera revert itself automatically.
 
+- ### Decal Attributes
+	Use `excam.z` to give a specific decal apparent z-depth.<br>
+	The z-coordinate of the camera is `-1f/Level.Zoom`.<br>
+
+	#### z
+	> The apparent depth of the decal
+
+	#### set_depth
+	> By default, the decal's render depth is overridden by some depth corresponding to `z`.
+	  Set this to false to use a custom render depth (specified in Loenn by right-clicking the decal)
+	#### repeat
+	> Repeats the decal in and out of z. The first number specifies the number of repeats- the second number specifies the z-coordinate to reach.
+	
+	Eg:
+	```  
+	<decals>
+		<decal path="SSC2025/LilacIsle/depth_test">
+			<excam.z z="0.1"/>                      # this decal will be behind the scene, as its depth is overridden
+		</decal>
+		<decal path="SSC2025/LilacIsle/fg_test">
+			<excam.z z="-0.5"/>                     # this decal will be between the scene and the (unzoomed) camera
+		</decal>
+		<decal path="SSC2025/LilacIsle/totally_real_decal_bg_a">
+			<excam.z z="0.6" set_depth="false"/>    # Uses its original render depth, but has apparent depth behind the scene.
+		</decal>
+		<decal path="SSC2025/LilacIsle/big_spoiler_wall_a">
+			<excam.z z="0" repeat="45,0.6"/>        # this decal repeats 45 times from z-depth 0 to 0.6
+		</decal>
+		<decal path="SSC2025/LilacIsle/oops_i_leaked_my_map_ground_a">
+			<excam.z z="0" repeat="45,0.6"/>        # same as above.
+		</decal>
+	</decals>
+	```
+
 - ### Console Commands: 
 	- `excam_is_active`
 	   > Tells you if the camera hooks are currently active.
@@ -337,6 +369,12 @@ This helper mod only works with Loenn. I will only make it work with Loenn.
 	   > Sets the default zoom to the specified factor. Negative values reset to the value specified in the Chapter's metadata.
 	- `excam_set_snap_speed`
 	   > Multiplies the camera's interpolation by the specified factor. Negative values reset to the value specified in the Chapter's metadata.
+	- `excam_render_chapter`
+	   > Render a native resolution image of every room in the currently active chapter.
+	     The files are saved as:<br>
+		 `<Celeste Directory>/Saves/excam_chapter_renders/...<path_to_map>... /<room_name>.png`<br>
+		 **This process can mess up session data, and often takes quite some time--especially on low-memory systems. Use with care.**<br>
+		 
 
 ## Oh! also!!
 

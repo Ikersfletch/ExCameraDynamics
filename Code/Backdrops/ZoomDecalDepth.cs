@@ -122,7 +122,7 @@ namespace ExtendedCameraDynamics.Code.Backdrops
         private float? z = 0f;
         private int repeat = 0;
         private float step = 0f;
-        private bool override_depth = false;
+        private bool override_depth = true;
         public override string Name => "excam.z";
 
         public override void ApplyTo(Decal decal)
@@ -145,7 +145,7 @@ namespace ExtendedCameraDynamics.Code.Backdrops
         public override void Parse(XmlAttributeCollection xml)
         {
             z = GetNullable<float>(xml, "z");
-            override_depth = Get<bool>(xml, "override_depth", false);
+            override_depth = Get<bool>(xml, "set_depth", true);
 
 
 
