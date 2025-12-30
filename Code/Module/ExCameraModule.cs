@@ -1,5 +1,6 @@
 using Celeste.Mod.ExCameraDynamics.Code.Entities;
 using Celeste.Mod.ExCameraDynamics.Code.Hooks;
+using Celeste.Mod.ExCameraDynamics.Code.Interop;
 using Celeste.Mod.ExCameraDynamics.Code.Module;
 using ExtendedCameraDynamics.Code.Backdrops;
 using MonoMod.ModInterop;
@@ -41,6 +42,7 @@ namespace Celeste.Mod.ExCameraDynamics
         public override void Load()
         {
             typeof(ExCameraInterop).ModInterop();
+			typeof(MotionSmoothingImports).ModInterop();
             On.Celeste.Level.LoadLevel += Level_LoadLevel;
             //Everest.Events.Level.OnLoadLevel += Level_OnLoadLevel;
             Everest.Events.Level.OnExit += Level_OnExit;

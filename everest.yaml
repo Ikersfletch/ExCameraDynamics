@@ -4,3 +4,6 @@
   Dependencies:
     - Name: Everest
       Version: 1.5577.0
+  OptionalDependencies:
+    - Name: MotionSmoothing
+      Version: 1.3.2
