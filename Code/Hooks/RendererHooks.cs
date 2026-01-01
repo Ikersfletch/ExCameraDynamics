@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Celeste.Mod.ExCameraDynamics.Code.Interop;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using Monocle;
@@ -65,11 +66,15 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 
             // Invoke the event
             OnBufferResize?.Invoke(BufferWidthOverride, BufferHeightOverride);
+
+			MotionSmoothingImports.ReloadLargeTextures?.Invoke();
         }
 
         public static void ResizeBufferToZoom(VirtualRenderTarget target)
         {
             if (target == null) return;
+
+			target = MotionSmoothingImports.GetResizableBuffer?.Invoke(target) ?? target;
 
             if (target.Width == BufferWidthOverride && target.Height == BufferHeightOverride) return; // don't resize what doesn't need to be resized.
 
