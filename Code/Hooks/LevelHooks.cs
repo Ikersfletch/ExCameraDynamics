@@ -25,14 +25,19 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
                 ResizeVanillaBuffers(level.Zoom);
             }
         }
-        public static IEnumerator ZoomToFocus(this Level level, ICameraFocusSource source, float duration)
+        public static IEnumerator ZoomToFocus(this Level level, ICameraFocusSource source, float duration, Ease.Easer easer = null)
         {
+            if (easer == null)
+            {
+                easer = Ease.SineInOut;
+            }
+
             AutomaticZooming = false;
             CameraFocus start = new CameraFocus(level);
             for (float t = 0.0f; t < 1.0f; t += Engine.DeltaTime / duration)
             {
                 CameraFocus to = source.CameraFocus;
-                level.ForceCameraTo(start.Lerp(to, (float)Math.Clamp(Ease.SineInOut(t), 0.0, 1.0)));
+                level.ForceCameraTo(start.Lerp(to, (float)Math.Clamp(easer(t), 0.0, 1.0)));
                 level.ZoomTarget = to.Zoom;
                 yield return null;
             }
@@ -49,14 +54,19 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             }
         }
 
-        public static IEnumerator ZoomToThenFollow(this Level level, ICameraFocusSource source, float zoomToDuration, float followDuration)
+        public static IEnumerator ZoomToThenFollow(this Level level, ICameraFocusSource source, float zoomToDuration, float followDuration, Ease.Easer easer = null)
         {
+            if (easer == null)
+            {
+                easer = Ease.SineInOut;
+            }
+
             AutomaticZooming = false;
             CameraFocus start = new CameraFocus(level);
             for (float t = 0.0f; t < 1.0f; t += Engine.DeltaTime / zoomToDuration)
             {
                 CameraFocus to = source.CameraFocus;
-                level.ForceCameraTo(start.Lerp(to, (float)Math.Clamp(Ease.SineInOut(t), 0.0, 1.0)));
+                level.ForceCameraTo(start.Lerp(to, (float)Math.Clamp(easer(t), 0.0, 1.0)));
                 level.ZoomTarget = to.Zoom;
                 yield return null;
             }
@@ -66,13 +76,18 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
                 yield return null;
             }
         }
-        public static IEnumerator ZoomBackFocus(this Level level, float duration)
+        public static IEnumerator ZoomBackFocus(this Level level, float duration, Ease.Easer easer = null)
         {
+            if (easer == null)
+            {
+                easer = Ease.SineInOut;
+            }
+
             CameraFocus start = new CameraFocus(level);
             //float to = ;
             for (float p = 0f; p < 1f; p += Engine.DeltaTime / duration)
             {
-                level.ForceCameraTo(start.Lerp(CameraFocus.FullZoomEval(level, false, true), (float)Math.Clamp(Ease.SineInOut(p), 0.0, 1.0)));
+                level.ForceCameraTo(start.Lerp(CameraFocus.FullZoomEval(level, false, true), (float)Math.Clamp(easer(p), 0.0, 1.0)));
                 yield return null;
             }
 
@@ -148,10 +163,11 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 
             orig(self);
         }
+        /*
         private static void Level_ZoomBack(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
-            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate<Action<Level>>((level) => 
                 {
                     level.ZoomTarget = ZoomTarget;
@@ -171,7 +187,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
                 }
             );
 
-        }
+        }*/
         private static void Level_ZoomAcross(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
@@ -184,14 +200,25 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         }
         private static void Level_ResetZoom(On.Celeste.Level.orig_ResetZoom orig, Level self)
         {
-            self.Zoom = CameraFocus.FullZoomEval(self).Zoom;
+            ForceCameraTo(self, CameraFocus.FullZoomEval(self));
             AutomaticZooming = true;
         }
 
         private static float _level_render_override_zoom_target(Level level, float discarded_zoom_target) => level.Zoom;
         private static Vector2 _level_render_smooth_camera_motion(Vector2 renderPos, Level level)
         {
-            if (level.Zoom <= 1f && level.Zoom == ZoomTarget) return renderPos;
+            
+            if ((ExCameraModule.Settings.OffGridRendering) switch
+            {
+                ExtendedCameraDynamics.Code.Module.ExCameraSettings.OffGrid.Subtle => (level.Zoom <= 1f && level.Zoom == ZoomTarget),
+                ExtendedCameraDynamics.Code.Module.ExCameraSettings.OffGrid.ActiveZoom => (level.Zoom == ZoomTarget),
+                ExtendedCameraDynamics.Code.Module.ExCameraSettings.OffGrid.ZoomIn => (level.Zoom <= 1f),
+                ExtendedCameraDynamics.Code.Module.ExCameraSettings.OffGrid.Always => false,
+                _ => true,
+            })
+            {
+                return renderPos;
+            }
 
 
             float factor = (level.Zoom * ((320f - level.ScreenPadding * 2f) / 320f));
@@ -199,6 +226,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             renderPos.Y -= _camera_floating_decimal.Y * factor;
 
             return renderPos;
+
         }
         private static Vector2 _level_render_account_for_mirror_mode(Vector2 screen_space)
         {
@@ -324,6 +352,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         {
             self.ForceCameraTo(CameraFocus.FullZoomEvalLoading(player, self));
             AutomaticZooming = true;
+
+            //player.respawnTween.OnComplete += (_) => { AutomaticZooming = true; };
             MostRecentTriggerBounds = null;
             //ResizeVanillaBuffers(self.Zoom);
         }

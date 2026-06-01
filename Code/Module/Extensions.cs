@@ -138,7 +138,7 @@ namespace Celeste.Mod.ExCameraDynamics
         /// <returns></returns>
         public static ZoomBounds GetCameraZoomBounds(this Player player, bool usePlayerHashSet = false, bool relaxZoom = false)
         {
-            return player.GetCameraZoomBounds(player.SceneAs<Level>(), usePlayerHashSet, relaxZoom);
+            return player.GetCameraZoomBounds(player.level, usePlayerHashSet, relaxZoom);
         }
         /// <summary>
         /// 
@@ -150,7 +150,7 @@ namespace Celeste.Mod.ExCameraDynamics
         {
             if (level.Transitioning) return new ZoomBounds(level?.Zoom ?? CameraZoomHooks.RestingZoomFactor);
 
-            if (CameraZoomHooks.AutomaticZooming || relaxZoom) return player?.GetCameraZoomUnsafe(level, usePlayerHashSet) ?? new ZoomBounds(level?.Zoom ?? 1f);
+            if ((CameraZoomHooks.AutomaticZooming && (player.respawnTween == null || !player.respawnTween.Active)) || relaxZoom) return player?.GetCameraZoomUnsafe(level, usePlayerHashSet) ?? new ZoomBounds(level?.Zoom ?? 1f);
 
             return new ZoomBounds(level?.Zoom ?? CameraZoomHooks.RestingZoomFactor);
 
@@ -224,7 +224,7 @@ namespace Celeste.Mod.ExCameraDynamics
             foreach (CameraZoomTrigger trigger in level.Tracker.Entities[typeof(CameraZoomTrigger)])
             {
                 if (!trigger.IsActive(level) || !trigger.CollideCheck(player)) continue;
-                if (trigger.ZoomMode == CameraZoomTrigger.Mode.Start)
+                if (trigger.ZoomMode == Trigger.PositionModes.NoEffect)
                 {
                     nearest_so_far = Math.Min(nearest_so_far, trigger.StartZF);
                     continue;

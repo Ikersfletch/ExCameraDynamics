@@ -89,14 +89,20 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 
         private static bool ShouldResize(float trigger_nearest_zoom, Level self, bool pass_auto = false)
         {
-            return
-                (
-                    /*(pass_auto || AutomaticZooming) && */ (current_buffer_zoom != trigger_nearest_zoom) && ( // the buffer could be resized...
-                        (current_buffer_zoom >= trigger_nearest_zoom && self.Zoom < current_buffer_zoom) || // we need to enlarge the buffer for what the zoom could be within this trigger...
-                        (self.Zoom >= trigger_nearest_zoom && self.Zoom >= current_buffer_zoom)  // OR we're more zoomed in than we could possibly need to be and the buffer's larger than the screen
-                        
-                    )
-                ) || (self.Zoom <= current_buffer_zoom && !AutomaticZooming);
+            return (ExCameraModule.Settings.BufferResizing) switch
+            {
+                ExCameraSettings.BufferMode.Dynamic =>
+                    (
+                        /*(pass_auto || AutomaticZooming) && */ (current_buffer_zoom != trigger_nearest_zoom) && ( // the buffer could be resized...
+                            (current_buffer_zoom >= trigger_nearest_zoom && self.Zoom < current_buffer_zoom) || // we need to enlarge the buffer for what the zoom could be within this trigger...
+                            (self.Zoom >= trigger_nearest_zoom && self.Zoom >= current_buffer_zoom)  // OR we're more zoomed in than we could possibly need to be and the buffer's larger than the screen
+
+                        )
+                    ) || (self.Zoom <= current_buffer_zoom && !AutomaticZooming),
+                ExCameraSettings.BufferMode.Static1440p => BufferWidthOverride != 2560 || BufferHeightOverride != 1440,
+                ExCameraSettings.BufferMode.Static1080p => BufferWidthOverride != 1920 || BufferHeightOverride != 1080,
+                ExCameraSettings.BufferMode.Static720p  => BufferWidthOverride != 1280 || BufferHeightOverride != 720,
+            };
         }
         /// <summary>
         /// Determines the bounds the camera can pan towards
@@ -117,6 +123,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 
             // the camera center
             Vector2 test_r = cameraPosition + new Vector2(width * 0.5f, height * 0.5f);
+            float camLeft = cameraPosition.X;
+            float camRight = cameraPosition.X + width;
+            float camTop = cameraPosition.Y;
+            float camBottom = cameraPosition.Y + height;
 
             // restrict based on FakeRoomEdges
             foreach (FakeRoomEdge edge in level.Tracker.GetEntities<FakeRoomEdge>())
@@ -124,8 +134,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
 
                 // if the fake edge is suitable for restricting the x-movement
                 if (
-                    edge.Top < test_r.Y + (height * 0.5f) && // the fake edge's top is above the bottom of the camera AND
-                    edge.Bottom > test_r.Y - (height * 0.5f)) // the fake edge's bottom is below the top of the camera
+                    edge.Top < camBottom && // the fake edge's top is above the bottom of the camera AND
+                    edge.Bottom > camTop) // the fake edge's bottom is below the top of the camera
                 {
                     //
                     if (test_r.X > edge.Right && bounds_x < edge.Right)
@@ -143,8 +153,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
                 }
 
                 // if the fake edge is suitable for restricting y-movement
-                if (edge.Right > test_r.X - (width * 0.5f) && // the fake edge's right is to the right of the left of the camera AND
-                    edge.Left < test_r.X + (width * 0.5f))  // the fake edge's left is to the left of the right of the camera
+                if (edge.Right > camLeft && // the fake edge's right is to the right of the left of the camera AND
+                    edge.Left < camRight)  // the fake edge's left is to the left of the right of the camera
                 {
                     //
                     if (test_r.Y > edge.Bottom && bounds_y < edge.Bottom)

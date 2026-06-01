@@ -3,7 +3,7 @@ local ZoomTrigger = {}
 ZoomTrigger.name = "ExCameraDynamics/CameraSliderZoomTrigger"
 ZoomTrigger.category = "camera"
 ZoomTrigger.fieldOrder = {
-    "x", "y", "width", "height", "mode","isMax", "zoomStart", "zoomEnd"
+    "x", "y", "width", "height", "positionMode","isMax", "zoomStart", "zoomEnd"
 }
 ZoomTrigger.fieldInformation = {
     deleteFlag = {
@@ -16,15 +16,17 @@ ZoomTrigger.fieldInformation = {
 	zoomStart = {
 		fieldType = "string"
 	},
-	mode = {
+	positionMode = {
 		fieldType = "string",
 		editable = false,
 		options = {
-			Start="Start",
+			NoEffect="NoEffect",
 			TopToBottom="TopToBottom",
 			BottomToTop="BottomToTop",
 			LeftToRight="LeftToRight",
-			RightToLeft="RightToLeft"
+			RightToLeft="RightToLeft",
+			HorizontalCenter="HorizontalCenter",
+			VerticalCenter="VerticalCenter"
 		}
 		
 	},
@@ -37,7 +39,7 @@ ZoomTrigger.placements = {
     data = {
 		zoomEnd = "1",
 		zoomStart = "1",
-		mode = "Start",
+		positionMode = "NoEffect",
 		isMax = true,
 		deleteFlag = ""
     }

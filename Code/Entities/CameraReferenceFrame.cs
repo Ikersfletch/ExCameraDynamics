@@ -43,7 +43,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Entities
 
         public static CameraFocus FullZoomEval(Player player, bool usePlayerHashSet = false, bool relaxZoom = false)
         {
-            return FullZoomEval(player, player.SceneAs<Level>(), usePlayerHashSet);
+            return FullZoomEval(player, player.level, usePlayerHashSet);
         }
         public static CameraFocus FullZoomEval(Player player, Level level, bool usePlayerHashSet = false, bool relaxZoom = false)
         {
@@ -71,7 +71,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Entities
 
         public static CameraFocus FromZoomEval(Player player, bool usePlayerHashSet = false, bool relaxZoom = false)
         {
-            return CameraFocusTarget.GetOffsetFocus(player.SceneAs<Level>(), player.Position, player.GetCameraZoomBounds(usePlayerHashSet, relaxZoom));
+            return CameraFocusTarget.GetOffsetFocus(player.level, player.Position, player.GetCameraZoomBounds(usePlayerHashSet, relaxZoom));
         }
 
         public static CameraFocus FromZoomEvalAtPoint(Level level, Vector2 worldPosition)

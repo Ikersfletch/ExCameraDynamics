@@ -3,7 +3,7 @@ local ZoomTrigger = {}
 ZoomTrigger.name = "ExCameraDynamics/CameraFrameTargetTrigger"
 ZoomTrigger.category = "camera"
 ZoomTrigger.fieldOrder = {
-    "x", "y", "width", "height", "easyKey", "lerpStrength", "lerpMode","xOnly","yOnly", "zoomStart"
+    "x", "y", "width", "height", "easyKey", "lerpStrength", "positionMode","xOnly","yOnly", "zoomStart"
 }
 ZoomTrigger.fieldInformation = {
     deleteFlag = {
@@ -20,15 +20,17 @@ ZoomTrigger.fieldInformation = {
 	lerpStrength = {
 		fieldType = "number"
 	},
-	lerpMode = {
+	positionMode = {
 		fieldType = "string",
 		editable = false,
 		options = {
-			Start="Start",
+			NoEffect="NoEffect",
 			TopToBottom="TopToBottom",
 			BottomToTop="BottomToTop",
 			LeftToRight="LeftToRight",
-			RightToLeft="RightToLeft"
+			RightToLeft="RightToLeft",
+			HorizontalCenter="HorizontalCenter",
+			VerticalCenter="VerticalCenter"
 		}
 		
 	},
@@ -44,7 +46,7 @@ ZoomTrigger.placements = {
     data = {
 		zoomStart = 1,
 		lerpStrength = 1,
-		lerpMode = "Start",
+		positionMode = "NoEffect",
 		easyKey = "",
 		xOnly = false,
 		yOnly = false,

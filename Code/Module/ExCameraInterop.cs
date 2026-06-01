@@ -17,6 +17,11 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
         /// <returns> Whether the extended camera hooks are currently applied. </returns>
         public static bool ExtendedCameraHooksEnabled() => CameraZoomHooks.HooksEnabled;
 
+        /// <summary> Multiplies the camera's interpolation by a fixed amount. </summary>
+        public static void SetSnappingSpeed(float speed) => CameraZoomHooks.SetSnappingSpeed(speed);
+
+        #region Render Status
+
         /// <returns> The current width, in pixels, of the general render buffers. </returns>
         public static int BufferWidthOverride() => CameraZoomHooks.BufferWidthOverride;
 
@@ -40,11 +45,19 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
 
         public static void SetRenderVerticalMirroring(bool flipped) => CameraZoomHooks.VerticalMirroring = flipped;
 
+        #endregion
+
+        #region Vanilla Zoom Method Replacements
+
+
         /// <summary>
-        /// A drop-in replacement for <see cref="Level.ZoomBack(float)"/> <br></br>
-        /// Replacing the original method via hooking is annoying- IEnumerator methods compile very peculiarly. <br></br>
-        /// Just use this to make all our lives easier :)
+        /// A drop-in replacement for <see cref="Level.ResetZoom()"/>
+        /// This exists for completion's sake.
+        /// <param name="level">The level object</param>
         /// </summary>
+        public static void Level_ResetZoom(Level level) => level.ResetZoom();
+
+        /// <summary> A drop-in replacement for <see cref="Level.ZoomBack(float)"/> </summary>
         public static IEnumerator Level_ZoomBack(Level level, float duration) => CameraZoomHooks.HooksEnabled ? CameraZoomHooks.ZoomBackFocus(level, duration) : level.ZoomBack(duration);
 
         /// <summary>
@@ -55,15 +68,42 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
         /// <returns></returns>
         public static IEnumerator Level_ZoomToFocus(Level level, Vector2 worldFocusPoint, float zoom, float duration) => CameraZoomHooks.ZoomToFocus(level, (CameraFocusWrapper)CameraFocus.FromCenter(worldFocusPoint, zoom), duration);
 
+        /// <summary>
+        /// A near-replacement for <see cref="Level.ZoomTo(Vector2, float, float)"/>. <br></br>
+        /// Allows you to specify a custom easer.
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerator Level_ZoomToFocus_Eased(Level level, Vector2 worldFocusPoint, float zoom, float duration, Ease.Easer ease) => CameraZoomHooks.ZoomToFocus(level, (CameraFocusWrapper)CameraFocus.FromCenter(worldFocusPoint, zoom), duration, ease);
+
+        /// <summary>
+        /// Zoom to a CameraReferenceFrame in the level denoted by easyKey
+        /// </summary>
+        /// <param name="level">The level object</param>
+        /// <param name="easyKey">The easykey of a CameraReferenceFrame</param>
+        /// <param name="duration">Time, in seconds, to zoom over.</param>
+        /// <param name="ease">The Easer for the Zoom. Defaults to <see cref="Ease.SineInOut"></see> if left null.</param>
+        /// <returns></returns>
+        public static IEnumerator Level_ZoomToReferenceFrameKey(Level level, string easyKey, float duration, Ease.Easer ease = null) => CameraZoomHooks.ZoomToFocus(level, CameraReferenceFrame.GetFromEasyKey(level, easyKey), duration, ease);
+
+
         /// <summary> <see cref="CameraReferenceFrame"/>s are placed in loenn to easily get camera positions for cutscenes and the like. You can get them here. </summary>
         public static Entity Get_CameraReferenceFrame(Level level, string easyKey) => CameraReferenceFrame.GetFromEasyKey(level, easyKey);
+
         /// <summary> Zooms to a <see cref="CameraReferenceFrame"/> over duration. </summary>
         public static IEnumerator Level_ZoomToCameraReferenceFrame(Level level, Entity cameraReferenceFrame, float duration) => CameraZoomHooks.ZoomToFocus(level, cameraReferenceFrame as ICameraFocusSource, duration);
-        public static IEnumerator Level_ZoomToCameraFocus(Level level, object cameraFocus, float duration) => CameraZoomHooks.ZoomToFocus(level,(CameraFocusWrapper)((CameraFocus)cameraFocus), duration);
+
         public static void Level_ForceZoomToCameraFocus(Level level, object cameraFocus) => CameraZoomHooks.ForceCameraTo(level, (CameraFocus)cameraFocus);
 
         /// <returns> The zoom evaluated from <see cref="CameraZoomTrigger"/>s at <paramref name="worldPoint"/> </returns>
         public static float Level_GetTriggerZoomAt(Level level, Vector2 worldPoint) => CameraFocus.FromZoomEvalAtPoint(level, worldPoint).Zoom;
+
+        #endregion
+
+        #region CameraFocusTarget
+
+        /// <returns>The CameraFocusTarget Component Type</returns>
+        public static Type Type_CameraFocusTarget() => typeof(CameraFocusTarget);
+
         /// <summary>
         /// The game will try to keep all <see cref="CameraFocusTarget"/>s on screen. <br></br>
         /// For reference, the player has a weight of 1. <br></br>
@@ -85,15 +125,42 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
 
         /// <returns> All <see cref="CameraFocusTarget"/>s in the Level </returns>
         public static List<Component> Tracked_CameraFocusTarget(Level level) => level?.Tracker?.GetComponents<CameraFocusTarget>();
-        
-        public static Type Type_CameraFocusTarget() => typeof(CameraFocusTarget);
 
-        /// <summary> Multiplies the camera's interpolation by a fixed amount. </summary>
-        public static void SetSnappingSpeed(float speed) => CameraZoomHooks.SetSnappingSpeed(speed);
 
+        #endregion
+
+        #region CameraFocus (Struct)
+        /// <summary>
+        /// Creates a CameraFocus struct based on the current position 
+        /// </summary>
         public static object Create_CameraFocus_FromActiveCameraPos(Level level) => new CameraFocus() { Position = level.Camera.Position, Zoom = level.Zoom };
+
+        /// <summary>
+        /// Creates a CameraFocus struct from world position and zoom
+        /// </summary>
         public static object Create_CameraFocus(Vector2 world_center, float zoom_factor) => CameraFocus.FromCenter(world_center, zoom_factor);
+
+        /// <summary>
+        /// Interpolates between two CameraFocus structs
+        /// </summary>
+        /// <param name="focus_a">A CameraFocus struct</param>
+        /// <param name="focus_b">A CameraFocus struct</param>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public static object CameraFocus_Lerp(object focus_a, object focus_b, float t) => ((CameraFocus)focus_a).Lerp((CameraFocus)focus_b, t);
+
+        /// <summary>
+        /// Zoom to a CameraFocus struct over duration.
+        /// </summary>
+        /// <param name="level">The level object</param>
+        /// <param name="cameraFocus">The CameraFocus struct in question</param>
+        /// <param name="duration">The length of the motion, in seconds</param>
+        /// <returns></returns>
+        public static IEnumerator Level_ZoomToCameraFocus(Level level, object cameraFocus, float duration) => CameraZoomHooks.ZoomToFocus(level, (CameraFocusWrapper)((CameraFocus)cameraFocus), duration);
+
+        #endregion
+
+        #region Custom Lookout Sprites
 
         // A hook to modify / add sprites to the custom lookouts added.
         // Called by both.
@@ -122,6 +189,10 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
             return prefix;
         }
 
+        #endregion
+
+        #region DO NOT USE 
+
         // Used by Dependency2. 
         // I am not explaining why this exists.
         // I am not explaining what it does.
@@ -129,5 +200,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Module
         // This is me implementing a probably divisive feature in a stupid and convoluted way. Oh well! 
         // Just know that it's probably not useful to you.
         public static Vector2 GetCameraInterpolation(Vector2 cameraPosition, Vector2 targetOffset, float t, Player player) => CameraZoomHooks.GetCameraInterpolation(cameraPosition, targetOffset, t, player);
+
+        #endregion
     }
 }

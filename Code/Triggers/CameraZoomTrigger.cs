@@ -11,7 +11,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
     [CustomEntity("ExCameraDynamics/CameraZoomTrigger")]
     public class CameraZoomTrigger : Trigger
     {
-        public enum Mode
+        internal enum Mode
         {
             Start,
             TopToBottom,
@@ -19,8 +19,8 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
             LeftToRight,
             RightToLeft
         }
-        public Mode ZoomMode;
-        
+        public PositionModes ZoomMode;
+
         // I was a fool and made these fields public.
 
         public float ZoomFactorEnd = 1f;
@@ -49,14 +49,39 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
         public CameraZoomTrigger(EntityData data, Vector2 offset) : base(data, offset)
         {
             Depth = (int)(-data.Position.X -data.Position.Y);
-            ZoomMode = data.Enum<Mode>("mode", Mode.Start);
+            if (data.Has("mode"))
+            {
+                Mode oldMode = data.Enum<Mode>("mode", Mode.Start);
+                switch (oldMode)
+                {
+                    case Mode.TopToBottom:
+                        ZoomMode = PositionModes.TopToBottom;
+                        break;
+                    case Mode.BottomToTop:
+                        ZoomMode = PositionModes.BottomToTop;
+                        break;
+                    case Mode.LeftToRight: 
+                        ZoomMode = PositionModes.LeftToRight;
+                        break;
+                    case Mode.RightToLeft:
+                        ZoomMode = PositionModes.RightToLeft;
+                        break;
+                    case Mode.Start:
+                        ZoomMode = PositionModes.NoEffect;
+                        break;
+                }
+            } else
+            {
+                ZoomMode = data.Enum<PositionModes>("positionMode", PositionModes.NoEffect);
+            }
+
             EndZF = data.Float("zoomEnd", 1f);
             StartZF = data.Float("zoomStart", 1f);
             ZoomBoundary = data.Bool("isMax", true) ? Boundary.SetsNearest : Boundary.SetsFurthest;
             DeleteFlag = data.Attr("deleteFlag", "");
         }
 
-        public CameraZoomTrigger(Vector2 position, int width, int height, float start_zf, float end_zf, Boundary boundary = Boundary.SetsNearest, Mode zoom_mode = Mode.Start, string delete_flag = "") : base(new EntityData() { Width = width, Height = height, Position = position}, Vector2.Zero)
+        public CameraZoomTrigger(Vector2 position, int width, int height, float start_zf, float end_zf, Boundary boundary = Boundary.SetsNearest, PositionModes zoom_mode = PositionModes.NoEffect, string delete_flag = "") : base(new EntityData() { Width = width, Height = height, Position = position}, Vector2.Zero)
         {
             Depth = (int)(-position.X - position.Y);
             EndZF = end_zf;
@@ -120,21 +145,23 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Triggers
             CameraZoomHooks.MostRecentTriggerBounds = null;
         }
 
+        public virtual float GetZoom(Player player)
+        {
+            return (GetPositionLerp(player, ZoomMode) * (EndZF - StartZF)) + StartZF;
+        }
+
         public virtual float GetZoom(Vector2 position)
         {
-            switch (ZoomMode)
+            return (ZoomMode) switch
             {
-                case Mode.TopToBottom:
-                    return Calc.ClampedMap(position.Y, Top, Bottom, StartZF, EndZF);
-                case Mode.BottomToTop:
-                    return Calc.ClampedMap(position.Y, Bottom, Top, StartZF, EndZF);
-                case Mode.LeftToRight:
-                    return Calc.ClampedMap(position.X, Left, Right, StartZF, EndZF);
-                case Mode.RightToLeft:
-                    return Calc.ClampedMap(position.X, Right, Left, StartZF, EndZF);
-                default:
-                    return StartZF;
-            }
+                PositionModes.LeftToRight => Calc.ClampedMap(position.X, base.Left, base.Right, StartZF, EndZF),
+                PositionModes.RightToLeft => Calc.ClampedMap(position.X, base.Right, base.Left, StartZF, EndZF),
+                PositionModes.TopToBottom => Calc.ClampedMap(position.Y, base.Top, base.Bottom, StartZF, EndZF),
+                PositionModes.BottomToTop => Calc.ClampedMap(position.Y, base.Bottom, base.Top, StartZF, EndZF),
+                PositionModes.HorizontalCenter => Math.Min(Calc.ClampedMap(position.X, base.Left, base.CenterX), Calc.ClampedMap(position.X, base.Right, base.CenterX)) * (EndZF - StartZF) + StartZF,
+                PositionModes.VerticalCenter => Math.Min(Calc.ClampedMap(position.Y, base.Top, base.CenterY), Calc.ClampedMap(position.Y, base.Bottom, base.CenterY)) * (EndZF - StartZF) + StartZF,
+                _ => StartZF,
+            };
         }
 
         public bool IsActive(Level level)

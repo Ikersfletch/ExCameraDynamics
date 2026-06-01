@@ -12,7 +12,7 @@ namespace ExtendedCameraDynamics.Code.Triggers
         public CameraDollyTrigger(EntityData data, Vector2 offset) : base(data, offset)
         {
             Duration = data.Float("duration");
-            this.ZoomMode = Mode.TopToBottom;
+            this.ZoomMode = PositionModes.TopToBottom;
         }
         public float Duration { get; set; } = 1f;
         public float Timer { get; set; } = 0f;

@@ -1,8 +1,4 @@
-﻿using Celeste.Mod.ExCameraDynamics.Code.Module;
-using ExtendedCameraDynamics.Code.Backdrops;
-using Microsoft.Xna.Framework;
-using MonoMod.Cil;
-using MonoMod.RuntimeDetour;
+﻿using MonoMod.RuntimeDetour;
 using System.Reflection;
 
 namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
@@ -28,7 +24,7 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         private static ILHook IL_Cassette_CollectRoutine;
 
         // This one works fine.
-        private static ILHook IL_Level_ZoomBack;
+        // private static ILHook IL_Level_ZoomBack;
 
         // These two don't--and I'm not fixing them, either
         // Instead, CameraFocus methods should be used to directly move & zoom the camera itself.
@@ -61,9 +57,6 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
         // Actually hooks the methods. This one is private for a reason.
         private static void CreateHooks()
         {
-            if (ExCameraRemoveLilacIslesZoomoutPrivileges.LilacIsleCheck()) {
-                return;
-            }
             hooks_enabled = true;
             IL_Player_get_CameraTarget = new ILHook(typeof(Player).GetProperty("CameraTarget", BindingFlags.Instance | BindingFlags.Public).GetAccessors(false)[0], PlayerCameraTarget);
             IL_Player_orig_Update = new ILHook(typeof(Player).GetMethod("orig_Update", BindingFlags.Instance | BindingFlags.Public), PlayerCameraInterpolation);
@@ -110,11 +103,12 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
                 typeof(Level).GetNestedTypes(BindingFlags.NonPublic)[17].GetMethod("MoveNext", BindingFlags.Instance | BindingFlags.NonPublic),
                 Level_ZoomAcross
             );
-
+            /*
             IL_Level_ZoomBack = new ILHook(
                 typeof(Level).GetNestedTypes(BindingFlags.NonPublic)[18].GetMethod("MoveNext", BindingFlags.Instance | BindingFlags.NonPublic),
                 Level_ZoomBack
             );
+            */
 
             IL_Level_TransitionRoutine = new ILHook(
                 typeof(Level).GetNestedTypes(BindingFlags.NonPublic)[2].GetMethod("MoveNext", BindingFlags.Instance | BindingFlags.NonPublic),
@@ -235,8 +229,9 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             IL_Cassette_CollectRoutine = null;
 
 
-            IL_Level_ZoomBack.Dispose();
-            IL_Level_ZoomBack = null;
+            //IL_Level_ZoomBack.Dispose();
+            //IL_Level_ZoomBack = null;
+
             IL_Level_ZoomTo.Dispose();
             IL_Level_ZoomTo = null;
             IL_Level_ZoomAcross.Dispose();

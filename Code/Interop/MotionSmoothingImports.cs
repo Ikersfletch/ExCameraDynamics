@@ -1,8 +1,6 @@
-using System;
-using System.Net;
-using Microsoft.Xna.Framework;
 using Monocle;
 using MonoMod.ModInterop;
+using System;
 
 namespace Celeste.Mod.ExCameraDynamics.Code.Interop;
 

@@ -36,7 +36,7 @@ namespace ExtendedCameraDynamics.Code.Triggers
             public float T = 1f;
             public ICameraFocusSource Focus;
 
-            public CameraZoomer(Vector2 position, int width, int height, float start_zf, float end_zf, Boundary boundary = Boundary.SetsNearest, Mode zoom_mode = Mode.Start, string delete_flag = "") : base(position, width, height, start_zf, end_zf, boundary, zoom_mode, delete_flag)
+            public CameraZoomer(Vector2 position, int width, int height, float start_zf, float end_zf, Boundary boundary = Boundary.SetsNearest, PositionModes zoom_mode = PositionModes.NoEffect, string delete_flag = "") : base(position, width, height, start_zf, end_zf, boundary, zoom_mode, delete_flag)
             {
             }
 
@@ -59,25 +59,42 @@ namespace ExtendedCameraDynamics.Code.Triggers
             target_data.Values = new Dictionary<string, object>();
             target_data.Values.Add("lerpStrength", data.Float("lerpStrength"));
 
-            CameraZoomTrigger.Mode lerpMode = data.Enum<CameraZoomTrigger.Mode>("lerpMode", CameraZoomTrigger.Mode.Start);
+            PositionModes mode;
 
-            switch (lerpMode) {
-                case CameraZoomTrigger.Mode.TopToBottom:
-                    target_data.Values.Add("positionMode", PositionModes.TopToBottom);
-                    break;
-                case CameraZoomTrigger.Mode.BottomToTop:
-                    target_data.Values.Add("positionMode", PositionModes.BottomToTop);
-                    break;
-                case CameraZoomTrigger.Mode.LeftToRight:
-                    target_data.Values.Add("positionMode", PositionModes.LeftToRight);
-                    break;
-                case CameraZoomTrigger.Mode.RightToLeft:
-                    target_data.Values.Add("positionMode", PositionModes.RightToLeft);
-                    break;
-                default:
-                    target_data.Values.Add("positionMode", PositionModes.NoEffect);
-                    break;
+            if (data.Has("lerpMode"))
+            {
+                CameraZoomTrigger.Mode lerpMode = data.Enum<CameraZoomTrigger.Mode>("lerpMode", CameraZoomTrigger.Mode.Start);
+
+                switch (lerpMode)
+                {
+                    case CameraZoomTrigger.Mode.TopToBottom:
+                        mode = PositionModes.TopToBottom;
+                        target_data.Values.Add("positionMode", PositionModes.TopToBottom);
+                        break;
+                    case CameraZoomTrigger.Mode.BottomToTop:
+                        mode = PositionModes.BottomToTop;
+                        target_data.Values.Add("positionMode", PositionModes.BottomToTop);
+                        break;
+                    case CameraZoomTrigger.Mode.LeftToRight:
+                        mode = PositionModes.LeftToRight;
+                        target_data.Values.Add("positionMode", PositionModes.LeftToRight);
+                        break;
+                    case CameraZoomTrigger.Mode.RightToLeft:
+                        mode = PositionModes.RightToLeft;
+                        target_data.Values.Add("positionMode", PositionModes.RightToLeft);
+                        break;
+                    default:
+                        mode = PositionModes.NoEffect;
+                        target_data.Values.Add("positionMode", PositionModes.NoEffect);
+                        break;
+                }
             }
+            else
+            {
+                mode = data.Enum<PositionModes>("positionMode", PositionModes.NoEffect);
+                target_data.Values.Add("positionMode", mode);
+            }
+
             target_data.Values.Add("xOnly", data.Bool("xOnly"));
             target_data.Values.Add("yOnly", data.Bool("yOnly"));
 
@@ -92,7 +109,7 @@ namespace ExtendedCameraDynamics.Code.Triggers
             target_data.Nodes = [data.Position + offset];
 
             _targetTrigger = new CameraMover(target_data, offset);
-            _zoomTrigger = new CameraZoomer(data.Position + offset, data.Width, data.Height, data.Float("zoomStart", 1f), data.Float("zoomStart", 1f), CameraZoomTrigger.Boundary.SetsNearest, lerpMode, delete_flag);
+            _zoomTrigger = new CameraZoomer(data.Position + offset, data.Width, data.Height, data.Float("zoomStart", 1f), data.Float("zoomStart", 1f), CameraZoomTrigger.Boundary.SetsNearest, mode, delete_flag);
 
             _targetTrigger.Zoomer = _zoomTrigger;
         }

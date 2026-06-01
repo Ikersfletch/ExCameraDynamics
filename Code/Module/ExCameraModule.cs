@@ -1,14 +1,31 @@
-using Celeste.Mod.ExCameraDynamics.Code.Entities;
 using Celeste.Mod.ExCameraDynamics.Code.Hooks;
 using Celeste.Mod.ExCameraDynamics.Code.Interop;
 using Celeste.Mod.ExCameraDynamics.Code.Module;
 using ExtendedCameraDynamics.Code.Backdrops;
+using ExtendedCameraDynamics.Code.Module;
+using Microsoft.Xna.Framework;
+using Monocle;
 using MonoMod.ModInterop;
+using System;
 namespace Celeste.Mod.ExCameraDynamics
 {
     public class ExCameraModule : EverestModule
     {
+
+
+        internal static Entity CreateDummy(Vector2 position)
+        {
+            Entity dummy = new Entity(position);
+            dummy.Add(new Image(GFX.Game["ExCameraDynamics/zoomLimit"]));
+            return dummy;
+        }
+
         public static ExCameraModule Instance;
+
+        public override Type SettingsType => typeof(ExCameraSettings);
+
+        public static ExCameraSettings Settings => (ExCameraSettings)Instance._Settings;
+
         public ExCameraModule()
         {
             Instance = this;
@@ -71,6 +88,7 @@ namespace Celeste.Mod.ExCameraDynamics
 
             orig(level, playerIntro, isFromLoader);
 
+            /*
             if (isFromLoader && CameraZoomHooks.HooksEnabled)
             {
                 if (level.Tracker.GetEntity<Player>() is Player p)
@@ -78,7 +96,7 @@ namespace Celeste.Mod.ExCameraDynamics
                     level.ForceCameraTo(CameraFocus.FullZoomEvalLoading(p, level));
                     CameraZoomHooks.AutomaticZooming = true;
                 }
-            }
+            }*/
         }
 
         public override void Unload()

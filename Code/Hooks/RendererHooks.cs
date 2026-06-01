@@ -1,4 +1,5 @@
 ﻿using Celeste.Mod.ExCameraDynamics.Code.Interop;
+using ExtendedCameraDynamics.Code.Module;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -31,8 +32,29 @@ namespace Celeste.Mod.ExCameraDynamics.Code.Hooks
             //BufferWidthOverride = /*1 + */(current_buffer_zoom >= 1f ? 320 : (int)Math.Min(MaxBufferWidth, Math.Ceiling(320f / current_buffer_zoom)));
             if (BoundBufferSize)
             {
-                BufferWidthOverride = /*1 + */(current_buffer_zoom >= 1f ? 320 : (int)Math.Min(MaxBufferWidth, Math.Ceiling(320f / current_buffer_zoom)));
-                BufferHeightOverride = /*1 + */(current_buffer_zoom >= 1f ? 180 : (int)Math.Min(MaxBufferHeight, Math.Ceiling(180f / current_buffer_zoom)));
+                switch (ExCameraModule.Settings?.BufferResizing)
+                {
+                    case ExCameraSettings.BufferMode.Dynamic:
+                        BufferWidthOverride = /*1 + */(current_buffer_zoom >= 1f ? 320 : (int)Math.Min(MaxBufferWidth, Math.Ceiling(320f / current_buffer_zoom)));
+                        BufferHeightOverride = /*1 + */(current_buffer_zoom >= 1f ? 180 : (int)Math.Min(MaxBufferHeight, Math.Ceiling(180f / current_buffer_zoom)));
+                        break;
+                    case ExCameraSettings.BufferMode.Static1440p:
+                        BufferWidthOverride = 2560;
+                        BufferHeightOverride = 1440;
+                        current_buffer_zoom = 0.125f;
+                        break;
+                    case ExCameraSettings.BufferMode.Static1080p:
+                        BufferWidthOverride = 1920;
+                        BufferHeightOverride = 1080;
+                        current_buffer_zoom = 0.16667f;
+                        break;
+                    case ExCameraSettings.BufferMode.Static720p:
+                        BufferWidthOverride = 1280;
+                        BufferHeightOverride = 720;
+                        current_buffer_zoom = 0.25f;
+                        break;
+                }
+
             }
             else
             {
